@@ -1,12 +1,13 @@
-# Comprendre le réseau quand on y connait vraiment rien
+# Comprendre le réseau quand on y connaît vraiment rien
 
-- [Comprendre le réseau quand on y connait vraiment rien](#comprendre-le-réseau-quand-on-y-connait-vraiment-rien)
+- [Comprendre le réseau quand on y connaît vraiment rien](#comprendre-le-réseau-quand-on-y-connaît-vraiment-rien)
   - [Notions couvertes](#notions-couvertes)
   - [L'analogie de la remise de courrier](#lanalogie-de-la-remise-de-courrier)
     - [Hypothèses de départ](#hypothèses-de-départ)
     - [Algorithme de remise de courrier primitif](#algorithme-de-remise-de-courrier-primitif)
     - [Algorithme de courrier amélioré](#algorithme-de-courrier-amélioré)
-    - [Algorithme de routage du courrier](#algorithme-de-routage-du-courrier)
+    - [Algorithme de redirection du courrier](#algorithme-de-redirection-du-courrier)
+    - [Cas de Paris](#cas-de-paris)
 
 ## Notions couvertes
 
@@ -25,7 +26,7 @@ Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons 
 
 Nous allons imaginer la mise en place d'un service postal fictif à l'échelle de la France et tracer un historique des optimisations pour enfin le calquer à un réseau TCP/IP.
 
-Imaginons une personne qui doit envoyer un courrier depuis Bordeaux vers Amiens. Pour simplifier l'analogie, nous allons simplement considérer la remise de courrier entre deux villes avec leurs codes postaux respectifs. Le courrier doit d'abord être déposé dans la boite au lettre de la ville où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite au lettre de la ville de destination.
+Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Pour simplifier l'analogie, nous allons simplement considérer la remise de courrier entre deux villes avec leurs codes postaux respectifs. Le courrier doit d'abord être déposé dans la boite au lettre de la ville où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite au lettre de la ville de destination.
 
 Sur l'enveloppe au départ de Bordeaux, nous indiquons simplement le code postal de la ville de destination, et au dos nous écrivons notre propre code postal pour que le destinataire puisse nous répondre.
 
@@ -85,40 +86,55 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite au lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-Dans l'analogie avec un réseau câblé, le bureau distributeur est appelé un *concentrateur*. Dans un réseau moderne, c'est l'appareil appelé *switch*.
+Dans l'analogie avec un réseau câblé, le bureau distributeur est appelé un *commutateur*. Dans un réseau moderne, c'est l'appareil appelé *switch*.
 
-Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureau distributeurs entre eux.
+Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
 
-### Algorithme de routage du courrier
+### Algorithme de redirection du courrier
 
 Dans cette dernière itération, nous allons maintenant considérer que les bureaux distributeurs ne peuvent remettre du courrier *uniquement* aux bureaux distributeurs des *départements limitrophes*.
 
-Pour que le nouvel algorithme fonctionne, chaque bureau distributeur doit avoir une liste des départements et pour chaque département de destination le département limitrophe vers lequel envoyer le courrier. Chaque département parcouru possède également sa propre liste.
+Parcours de notre courrier avec la nouvelle contrainte :
 
-Exemple de liste de "routage" connu du département 33 :
+![Alt text](images/saint-medart-demuin-routage-numeros.jpg)
+
+Pour que le nouvel algorithme fonctionne, chaque bureau distributeur doit avoir un tableau pré-calculé de tous les départements possibles associé avec le département limitrophe vers lequel envoyer le courrier. Chaque département parcouru possède également sa propre liste.
+
+Exemple de tableau des redirections connues du département `33` :
 
 | Département destinataire | Département de transit |
 | ------------------------ | ---------------------- |
 | `85`                     | `17`                   |
 | `79`                     | `24`                   |
 | `86`                     | `16`                   |
+| `16`                     | `16`                   |
 | `87`                     | `24`                   |
 | `19`                     | `24`                   |
+| `24`                     | `24`                   |
 | `46`                     | `24`                   |
 | ...                      | ...                    |
 | `80`                     | `24`                   |
 
-Chaque département traversé possède sa propre liste optimisée des départements associé au département limitrophe vers lequel envoyer le courrier.
+Voici comment fonctionne ce tableau : lors de la réception d'un courrier à destination du département `87`, on sait que le plus court chemin est par le département `24` donc on transmet le courrier au bureau distributeur du département `24`, qui transmettra alors directement au bureau distributeur du département `87` qui lui est limitrophe.
 
-Avec l'algorithme de routage :
+Chaque département traversé possède donc son propre tableau optimisé des départements associé au département limitrophe vers lequel envoyer le courrier. Si jamais un bureau d'un département se mettait subitement en grève, le tableau des département limitrophes serait alors recalculé. En France, il y a très souvent au moins 2 département limitrophes, donc on peut facilement trouver un moyen de contourner le département en grève. De la même façon, on peut imaginer associer un *poids* à chaque route. Par exemple, un département montagneux pourra avoir un poids plus élevé qu'un département en plaine. L'algorithme prendra alors en compte ces paramètres afin de calculer le prochain département.
+
+Avec cet algorithme de redirection de proche en proche :
 
 1. L’expéditeur dépose le courrier en partance dans la boite aux lettres `33160`
 2. Le courrier est automatiquement acheminé dans la boite aux lettres `33000`
-3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite au lettres `80` + `000` = `80000`
-4. On cherche dans la table de routage le meilleur département limitrophe pour `80110` : `80`->`24`, on envoie donc le courrier vers `24000`
-5. Le courier arrive à `24000` qui cherche dans sa table de routage: `80110` : `80`->`87` et envoie donc le courrier à `87000`
-6. Chaque bureau distributeur de département envoie de proche en proche jusqu'au buteau destinataire `8000.`
-7. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
+3. On cherche dans la table de routage le meilleur département limitrophe pour `80110` : `80`->`24`, on envoie donc le courrier vers `24000`
+4. Le courier arrive à `24000` qui cherche dans sa table de routage: `80110` : `80`->`87` et envoie donc le courrier à `87000`
+5. Chaque bureau distributeur de département envoie de proche en proche jusqu'au buteau destinataire `8000.`
+6. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-![Alt text](images/saint-medart-demuin-routage-numeros.jpg)
+![Alt text](images/saint-medart-demuin-routage-tableau.jpg)
+
+Ce système de routage a beaucoup d'avantages :
+
+- Une fois le tableau de redirection calculé, il n'y a pas besoin d'autorité centrale pour prendre les décision d'itinéraire. Le système est ainsi extrêmement résiliant.
+- Le système n'a pas besoin de l'historique de passage d'un courrier dans les différent département. L'enveloppe de courrier n'a pas besoin d'être modifiée pendant son parcours
+- Le système peut stocker plusieurs routes possibles pour une même destination, et il peut aussi s'adapter à l'ajout et la suppression de département intermédiaires.
+
+### Cas de Paris
 
