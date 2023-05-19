@@ -9,6 +9,13 @@
     - [Algorithme de courrier amélioré : la commutation](#algorithme-de-courrier-amélioré--la-commutation)
     - [Algorithme de redirection du courrier : le routage](#algorithme-de-redirection-du-courrier--le-routage)
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
+  - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
+    - [Le datagramme IP](#le-datagramme-ip)
+    - [L'adresse IP](#ladresse-ip)
+    - [La notation CIDR](#la-notation-cidr)
+    - [Configuration des nœuds](#configuration-des-nœuds)
+    - [Configuration des switchs](#configuration-des-switchs)
+    - [Configuration des routeurs](#configuration-des-routeurs)
 
 ## Notions couvertes
 
@@ -18,8 +25,6 @@ Le but de cet article est de comprendre les notions fondamentales d'un réseau T
 - Routage de datagrammes
 - Adresse IP
 - CIDR et masque de sous-réseau
-- BGP
-- TCP
 
 ## L'analogie de la remise de courrier
 
@@ -100,7 +105,7 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite au lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-> Dans l'analogie avec un réseau câblé, le bureau distributeur est appelé un **commutateur**. Dans un véritable réseau IP, cet appareil est appelé un **switch**.
+> Dans l'analogie avec un réseau IP, le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
 
 Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
 
@@ -144,7 +149,8 @@ Avec cet algorithme de redirection de proche en proche :
 
 ![Alt text](images/saint-medart-demuin-routage-tableau.jpg)
 
-> Dans l'analogie avec un réseau câblé, celui qui redirige le courrier au département suivant est appelé un **routeur**. Dans les véritables réseaux IP, cet appareil est appelé un **router**. Dans notre analogie, les bureaux distributeurs font office de **commutateurs** et de **routeurs** mais dans les réseaux IP, ce sont des appareils différents.
+> Dans l'analogie avec un réseau IP, celui qui redirige le courrier au département suivant est appelé un **routeur** (ou **router** en anglais).
+> Dans notre analogie, les bureaux distributeurs font office à la fois de **commutateurs** et de **routeurs** mais dans les réseaux IP, ce sont des appareils différents comme nous le verrons dans le chapitre suivant.
 
 Ce système de routage a beaucoup d'avantages :
 
@@ -154,13 +160,138 @@ Ce système de routage a beaucoup d'avantages :
 
 ### Le cas spécial des départements d'outre-mer : les sous-réseaux
 
-Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux code postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles**! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numero de département sur 3 digits, mais ce genre de changement est généralement très couteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
+Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux code postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles**! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numero de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
 
-Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits : "étendre" à 3 digits le numero du département, et "réduire" à 2 digits l'identifiant de la commune. En faisant ce choix, nous sommes par contre limité à identifier moins de 99 communes par département.
+Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits : **"augmenter" à 3 digits le numéro du département, et "réduire" à 2 digits l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 digits, mais en contrepartie, nous sommes limité à identifier moins de 99 communes par département.
 
-| commune        | Code postal | Département | commune |
-| -------------- | ----------- | ----------- | ------- |
-| Trois-Rivières | `97114​`    | `971`       | `14`    |
-| Saint-Paul     | `97460​`    | `974`       | `60`    |
+| Commune                | Code postal | Département | commune |
+| ---------------------- | ----------- | ----------- | ------- |
+| Saint-Médard-en-Jalles | `33160`     | `33`        | `160`   |
+| Démuin                 | `80110`     | `80`        | `110`   |
+| Trois-Rivières         | `97114​`    | `971`       | `14`    |
+| Saint-Paul             | `97460​`    | `974`       | `60`    |
 
-Pour 
+Pour adapter ces nouveaux identifiants au système de **commutation** et de **routage** existant, c'est assez simple :
+
+- Au niveau de la commune de départ et de destination, chaque commune doit stocker un paramètre qui permet de calculer le centre distributeur du département. Par exemple en gardant en mémoire le nombre de digit à "retirer" pour obtenir le code postal du bureau distributeur
+
+| Code postal de la commune | Nombre de digit identifiant le département | Code postal du bureau distributeur |
+| ------------------------- | ------------------------------------------ | ---------------------------------- |
+| `33160`                   | 2                                          | `33000`                            |
+| `80110`                   | 2                                          | `80000`                            |
+| `97114​`                  | 3                                          | `97100`                            |
+| `97460​`                  | 3                                          | `97400`                            |
+
+- Au niveau des tableaux de redirection, chaque bureau de distribution doit également connaître le nombre de digits à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grand.
+
+| Code postal de la commune | Nombre de digit identifiant le département | Département |
+| ------------------------- | ------------------------------------------ | ----------- |
+| `33160`                   | 2                                          | `33`        |
+| `80110`                   | 2                                          | `80`        |
+| `97114​`                  | 3                                          | `971`       |
+| `97460​`                  | 3                                          | `974`       |
+
+> Dans l'analogie avec un réseau IP, le nombre de digit identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
+
+
+## Application des notions précédentes aux réseaux IP (Internet Protocol)
+
+### Le datagramme IP
+
+
+
+Lorsque 2 appareils (ou **nœuds**) du réseau veulent communiquer, ils doivent s'envoyer une certaine quantité de donnée. Pour commencer, les données vont être découpées en petits morceaux de petites tailles appelés **paquets**. On ajoute à ces données "brutes" des données supplémentaires, comme l'adresse de destination et l'adresse de retour, ainsi que d'autres données utiles à la transmission.
+
+> C'est l'équivalent du courrier dans une enveloppe dans l'exemple du service postal.
+
+Ils sont ensuite envoyé sur le réseaux et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajets.
+
+Le destinataire reçoit ces petits paquets potentiellement dans le désordre et doit rassembler les données dans l'ordre pour reconstruire le message originel.
+
+### L'adresse IP
+
+Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez grande pour que Internet puisse fonctionner.
+
+Une adresse IP version 4 (IPv4) est constitué de 32 bits et peux donc décrire $2^{32}$ addresses, soit à peu près 2 milliards. Ce chiffre parait gros, mais finalement assez peu à l'échelle d'Internet.
+
+Une adresse IP version 6 (IPv6) est constitué de 128 bits et peux donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions (oui, c'est beaucoup!). Il devrait remplacer IPv4 un jour.
+
+IPv6 est légèrement plus complexe que IPv4, **nous allons donc terminer les explications avec IPv4 uniquement**. Les mêmes notions s'appliquent avec IPv6.
+
+Une adresse IPv4 s'écrit généralement avec 4 octets de 8 bits convertis en décimal.
+
+Exemple : `193.43.55.67` = `11000001.00101011.00110111.01000011`
+
+> C'est l'équivalent du code postal dans l'exemple du service postal
+
+### La notation CIDR
+
+Comme nous l'avons vu avec les code postaux, une adresse contient 2 informations :
+
+- Le réseau dans lequel se trouve l'appareil (équivalent du département)
+- L'identifiant de l'appareil au sein de se réseau (équivalent de l'identifiant de commune)
+
+Seul les nœuds et les routeurs ont besoins de savoir comment découper l'adresse afin de router correctement les datagrammes. Les datagrammes eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur.
+
+Elle en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il va devoir découper intelligemment. Par exemple, il devra réfléchir pour avoir suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller sur internet, quel sous-réseau hébergera les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+
+Pendant longtemps, on a dissocié la notation de l'**adresse IP** et la notation de **masque de sous-réseau**, qui permet de déduire quel partie de l'adresse est le réseau ou l'identifiant:
+
+L'exemple le plus courant est d'utiliser le dernier octet comme identifiant du nœud :
+
+|                           | Représentation classique |
+| ------------------------- | ------------------------ |
+| Adresse du nœud           | 193.43.55.67             |
+| Masque de sous-réseau     | 255.255.255.0            |
+| Adresse du réseau         | 193.43.55.0              |
+| Nombre de nœuds possibles | 254                      |
+
+A défaut d'être simple, cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire.
+
+Heureusement, une notation plus compréhensible a été trouvé : le CIDR (*Classless Inter-Domain Routing*). Cette notation rajoute simplement un slach `/` suivi d'un nombre décimal pour indiquer la taille de l'adresse réseau.
+
+Même exemple que précédemment mais avec la notation CIDR, le masque `255.255.255.0` signifie "garde les 24 premiers digits binaires" :
+
+|                           | Représentation CIDR |
+| ------------------------- | ------------------- |
+| Adresse du nœud           | 193.43.55.67/24     |
+| Adresse du réseau         | 193.43.55.0         |
+| Nombre de nœuds possibles | 254                 |
+
+> Pour bien comprendre la notion de CIDR, il faut faire le parallèle avec la notion de département sur 2 ou 3 chiffres dans l'exemple du service postal.
+
+### Configuration des nœuds
+
+Pour communiquer sur le réseau, un nœud est le seul responsable de sa propre adresse sur le réseau.
+
+- Lorsqu'il enverra un datagramme, il ajoutera dans les meta-données sa propre adresse comme adresse de retour
+- Lorsque des datagrammes arrivent sur son sous-réseau, le nœud devra les réclamer au switch qui s'occupe de la distribution locale.
+
+> Selon l'analogie avec le système postal, chaque commune connaît son propre code postal
+
+Cela implique que l'administrateur système n'a pas le droit à l'erreur :
+
+- Si l'administrateur donne au nœud une adresse qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données
+- Si l'administrateur donne la même adresse à 2 nœuds du même sous-réseau, les 2 nœuds réclameront les mêmes données et il est probable que chacun de ces nœuds ne reçoivent que des données tronquées
+
+Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le DCHP qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
+
+Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte est considérée comme un nœud du réseau indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
+
+### Configuration des switchs
+
+Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les paquets à ceux qui les réclament grâce au protocole ARP (Address Resolution Protocol)
+
+Fonctionnement de ARP :
+
+1. Le switch reçoit un datagramme sur un de ces "port" (câble branché) à destination d'une adresse IP
+2. Le switch envoie un message spécial à **tous** ces ports actifs pour demander à qui appartient l'adresse IP de destination
+3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même
+4. Le switch envoie le datagramme sur le câble de celui qui a répondu
+5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent
+
+En réalité, les switchs modernes ont des configurations qui peuvent être plus complexes, comme par exemple la possibilité de créer des sous-réseaux virtuels étalés entre plusieurs switchs : les VLAN (Virtual Local Area Network)
+
+### Configuration des routeurs
+
+Les routeurs ne connaissent pas les nœuds du réseau, par contre il doivent être configurés pour connaître le sous
