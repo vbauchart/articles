@@ -62,8 +62,8 @@ Avec ces nouveaux éléments, l'algorithme est modifié:
 
 1. Je met l'enveloppe dans la boite aux lettres de Saint-Médard-en-Jalles
 2. Un facteur récupère l'enveloppe et la transporte jusqu'au bureau distributeur du département
-1. Un facteur récupère l'enveloppe au bureau distributeur
-2. Mon destinataire récupère l'enveloppe dans la boite aux lettres de Démuin
+3. Un facteur récupère l'enveloppe au bureau distributeur
+4. Mon destinataire récupère l'enveloppe dans la boite aux lettres de Démuin
 
 Voici le nouveau trajet effectué par le courrier :
 
@@ -87,8 +87,38 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 
 Dans l'analogie avec un réseau câblé, le bureau distributeur est appelé un *concentrateur*. Dans un réseau moderne, c'est l'appareil appelé *switch*.
 
-Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureau distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureau distributeurs entre eux.
+Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureau distributeurs entre eux.
 
 ### Algorithme de routage du courrier
 
-Dans cette dernière itération, nous allons maintenant considérer que les bureaux distributeurs ne peuvent remettre du courrier uniquement aux bureaux distributeurs des départements limitrophes
+Dans cette dernière itération, nous allons maintenant considérer que les bureaux distributeurs ne peuvent remettre du courrier *uniquement* aux bureaux distributeurs des *départements limitrophes*.
+
+Pour que le nouvel algorithme fonctionne, chaque bureau distributeur doit avoir une liste des départements et pour chaque département de destination le département limitrophe vers lequel envoyer le courrier. Chaque département parcouru possède également sa propre liste.
+
+Exemple de liste de "routage" connu du département 33 :
+
+| Département destinataire | Département de transit |
+| ------------------------ | ---------------------- |
+| `85`                     | `17`                   |
+| `79`                     | `24`                   |
+| `86`                     | `16`                   |
+| `87`                     | `24`                   |
+| `19`                     | `24`                   |
+| `46`                     | `24`                   |
+| ...                      | ...                    |
+| `80`                     | `24`                   |
+
+Chaque département traversé possède sa propre liste optimisée des départements associé au département limitrophe vers lequel envoyer le courrier.
+
+Avec l'algorithme de routage :
+
+1. L’expéditeur dépose le courrier en partance dans la boite aux lettres `33160`
+2. Le courrier est automatiquement acheminé dans la boite aux lettres `33000`
+3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite au lettres `80` + `000` = `80000`
+4. On cherche dans la table de routage le meilleur département limitrophe pour `80110` : `80`->`24`, on envoie donc le courrier vers `24000`
+5. Le courier arrive à `24000` qui cherche dans sa table de routage: `80110` : `80`->`87` et envoie donc le courrier à `87000`
+6. Chaque bureau distributeur de département envoie de proche en proche jusqu'au buteau destinataire `8000.`
+7. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
+
+![Alt text](images/saint-medart-demuin-routage-numeros.jpg)
+
