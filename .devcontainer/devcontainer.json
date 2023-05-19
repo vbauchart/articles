@@ -18,8 +18,14 @@
 				"streetsidesoftware.code-spell-checker",
 				"DavidAnson.vscode-markdownlint",
 				"shd101wyy.markdown-preview-enhanced",
-				"bierner.github-markdown-preview"
-			]
+				"bierner.github-markdown-preview",
+				"streetsidesoftware.code-spell-checker-french"
+			],
+			"settings": {
+				"cSpell.language": "fr",
+				"editor.defaultFormatter": "yzhang.markdown-all-in-one",
+				"editor.formatOnSave": true
+			}
 		}
 	}
 
