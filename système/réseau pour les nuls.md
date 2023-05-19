@@ -16,6 +16,8 @@
     - [Configuration des nœuds](#configuration-des-nœuds)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
+    - [Exemple complet](#exemple-complet)
+  - [Conclusion](#conclusion)
 
 ## Notions couvertes
 
@@ -280,18 +282,34 @@ Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte
 
 ### Configuration des switchs
 
-Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les paquets à ceux qui les réclament grâce au protocole ARP (Address Resolution Protocol)
+Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les paquets à ceux qui les réclament grâce au **protocole ARP** (Address Resolution Protocol).
 
 Fonctionnement de ARP :
 
 1. Le switch reçoit un datagramme sur un de ces "port" (câble branché) à destination d'une adresse IP
 2. Le switch envoie un message spécial à **tous** ces ports actifs pour demander à qui appartient l'adresse IP de destination
-3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même
+3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même (le nœud peut être un routeur si l'adresse appartient à un autre sous-réseau)
 4. Le switch envoie le datagramme sur le câble de celui qui a répondu
-5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent
+5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent (on parle de **cache ARP**)
 
 En réalité, les switchs modernes ont des configurations qui peuvent être plus complexes, comme par exemple la possibilité de créer des sous-réseaux virtuels étalés entre plusieurs switchs : les VLAN (Virtual Local Area Network)
 
+> Selon l'analogie avec le système postal, les switchs sont les bureaux de distribution locaux, ils récupèrent les courriers des communes ou distribuent le courrier aux communes
+
 ### Configuration des routeurs
 
-Les routeurs ne connaissent pas les nœuds du réseau, par contre il doivent être configurés pour connaître le sous
+Un routeur ne connaît que les adresses des sous-réseaux qui se trouve derrière lui. Les autres sous-réseaux lui sont envoyés par les autres routeurs du réseau grâce à des protocoles spécifiques (comme BGP ou OSPF).
+
+Dans ses tables de routages, il peut associer des poids ou calculer les meilleures routes ou s'adapter à la perte d'un autre routeur.
+
+> Les table de routages correspondent aux tableaux de redirections dans l'analogie avec le système postal. Ils font le travail des bureaux de distribution lors du transfert de courrier vers un département limitrophe.
+
+### Exemple complet
+
+![Alt text](images/nsi_term_archi_rout_1.png)
+
+## Conclusion
+
+J’espère que l'analogie avec le système postal vous aura aider à comprendre comment un petit paquet de donnée arrive à trouver son chemin au travers d'Internet. Bien sûr il reste beaucoup de concepts que j'ai volontairement passé sous silence pour rester le plus compréhensible possible.
+
+Normalement, à l'issue de cette lecture, vous devriez avoir ressenti un concept important caractéristiques aux réseaux IP et à Internet en particulier : vous devriez avoir mieux compris à quel point cette architecture est si solide grâce à l'absence d'autorité de contrôle central.
