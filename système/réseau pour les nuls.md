@@ -138,7 +138,7 @@ Exemple de tableau des redirections connues du département `33` :
 
 Voici comment fonctionne ce tableau : lors de l’expédition d'un courrier depuis le départements `33` à destination du département `87`, on sait que le plus court chemin est par le département `24` donc on transmet le courrier au bureau distributeur du département `24`, qui transmettra alors directement au bureau distributeur du département `87` qui lui est limitrophe.
 
-Chaque département traversé possède donc son propre tableau optimisé des départements associé au département limitrophe vers lequel envoyer le courrier. Si jamais un bureau d'un département se mettait subitement en grève, le tableau des département limitrophes serait alors recalculé. En France, il y a très souvent au moins 2 département limitrophes, donc on peut facilement trouver un moyen de contourner le département en grève. De la même façon, on peut imaginer associer un *poids* à chaque route. Par exemple, un département montagneux pourra avoir un poids plus élevé qu'un département en plaine. L'algorithme prendra alors en compte ces paramètres afin de calculer le prochain département.
+Chaque département traversé possède donc son propre tableau optimisé des départements associé au département limitrophe vers lequel envoyer le courrier. Si jamais un bureau d'un département était subitement fermé, le tableau des département limitrophes serait alors recalculé. En France, il y a très souvent au moins 2 département limitrophes, donc on peut facilement trouver un moyen de contourner le département fermé. De la même façon, on peut imaginer associer un *poids* à chaque route. Par exemple, un département montagneux pourra avoir un poids plus élevé qu'un département en plaine. L'algorithme prendra alors en compte ces paramètres afin de calculer le prochain département.
 
 Avec cet algorithme de redirection de proche en proche :
 
@@ -212,13 +212,15 @@ Le destinataire reçoit ces petits paquets potentiellement dans le désordre et 
 
 ### L'adresse IP
 
-Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez grande pour que Internet puisse fonctionner.
+Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez grandes pour que Internet puisse fonctionner.
 
-Une adresse IP version 4 (IPv4) est constitué de 32 bits et peux donc décrire $2^{32}$ addresses, soit à peu près 2 milliards. Ce chiffre parait gros, mais finalement assez peu à l'échelle d'Internet.
+Une adresse IP version 4 (IPv4) est constitué de 32 bits et peut donc décrire $2^{32}$ addresses, soit à peu près 4 milliards. Ca paraissait suffisant lors de sa création mais avec tous les nouveaux usages, on parle désormais de pénurie d'adresse au niveau mondial.
 
-Une adresse IP version 6 (IPv6) est constitué de 128 bits et peux donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions (oui, c'est beaucoup!). Il devrait remplacer IPv4 un jour.
+Une adresse IP version 6 (IPv6) est constitué de 128 bits et peut donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions. Ce protocole a été créé pour résoudre les limites de IPv4, et au passage lui ajouter quelques fonctionnalités, notemment pour augmenter la sécurité.
 
-IPv6 est légèrement plus complexe que IPv4, **nous allons donc terminer les explications avec IPv4 uniquement**. Les mêmes notions s'appliquent avec IPv6.
+Plus complet (et plus complexe!), IPv6 est sensé remplaçé IPv4 à terme, mais la migration est difficile car elle nécéssite le changement de tout le matériel. De plus ces 2 protocoles ne sont pas compatibles entre eux, et la migration nécéssite de mettre au point des stratégies de cohabitation pas toujours simples.
+
+**Nous allons donc terminer les explications avec IPv4 uniquement** car leurs principes sont globalement identiques.
 
 Une adresse IPv4 s'écrit généralement avec 4 octets de 8 bits convertis en décimal.
 
