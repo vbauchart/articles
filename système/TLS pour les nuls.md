@@ -8,7 +8,7 @@
   - [Un secret bien gardé à partager](#un-secret-bien-gardé-à-partager)
   - [Un sentiment d'asymétrie](#un-sentiment-dasymétrie)
   - [La Terre du Milieu](#la-terre-du-milieu)
-  - ["Papier, s'il vous plait !"](#papier-sil-vous-plait-)
+  - ["Papier, s'il vous plaît !"](#papier-sil-vous-plaît-)
 
 ## Notions couvertes
 
@@ -148,6 +148,6 @@ sequenceDiagram
 
 Nous allons donc reformuler à nouveau la problématique par une phrase: **Comment être sûr de l'identité de l'entité réseau avec qui on va échanger une clef secrète?**
 
-## "Papier, s'il vous plait !"
+## "Papier, s'il vous plaît !"
 
-Tous nos beaux efforts sont donc réduits à néant par une simple question de design : dans un réseau décentralisé sans autorité centrale, il n'existera jamais de garantie que 
+Tous nos beaux efforts sont donc réduits à néant par une simple question de design : dans un réseau décentralisé sans autorité centrale, il n'existera jamais de garantie que celui qui recevra nos messages est bien celui qu'on pense !
