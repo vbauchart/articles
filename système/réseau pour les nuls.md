@@ -32,7 +32,7 @@ Le but de cet article est de comprendre les notions fondamentales d'un réseau T
 
 ### Avertissement
 
-Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet, vous intéresse, je vous invite à consulter la page Wikipedia https://fr.wikipedia.org/wiki/Code_postal_en_France.
+Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia https://fr.wikipedia.org/wiki/Code_postal_en_France.
 
 ### Hypothèses de départ
 
@@ -40,9 +40,9 @@ Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons 
 
 Nous allons donc imaginer la mise en place d'un service postal fictif à l'échelle de la France.
 
-Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Pour simplifier l'analogie, nous allons simplement considérer la remise de courrier entre deux communes avec leurs codes postaux respectifs. Le courrier doit d'abord être déposé dans la boite au lettre de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite au lettre de la commune de destination.
+Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Pour simplifier l'analogie, nous allons simplement considérer la remise de courrier entre deux communes avec leurs codes postaux respectifs. Le courrier doit d'abord être déposé dans la boite aux lettres de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite aux lettres de la commune de destination.
 
-Pour rappel, un code postal est constitué d'un numero de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
+Pour rappel, un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
 
 | Commune                | Code postal | Département | Identifiant de commune |
 | ---------------------- | ----------- | ----------- | ---------------------- |
@@ -62,14 +62,14 @@ Exemple de courrier à envoyer :
 
 Voici donc notre premier algorithme sans aucune contrainte :
 
-1. Je met l'enveloppe dans la boite aux lettres de Saint-Médard-en-Jalles
+1. Je dépose l'enveloppe dans la boite aux lettres de Saint-Médard-en-Jalles
 2. Un facteur récupère l'enveloppe et la transporte jusqu'à la boite aux lettres de Démuin
 3. Mon destinataire récupère l'enveloppe dans la boite aux lettres de Démuin
 
 Voici le trajet qui sera effectué par notre courrier :
 ![Alt text](images/saint-medart-demuin-direct.jpg)
 
-Avec cet algorithme, il faut effectuer autant de trajet qu'il y a de courrier à remettre. Dans le cadre de l'analogie un réseau câblé, cela signifierai qu'il faut établir des câbles réseaux entre chaque communes de la carte, soit pour $N$ communes, nous aurions besoin de $N^N$ câbles.
+Avec cet algorithme, il faut effectuer autant de trajet qu'il y a de courrier à remettre. Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut établir des câbles réseaux entre chaque commune de la carte, soit pour $N$ communes, nous aurions besoin de $N^N$ câbles.
 
 ### Algorithme de courrier amélioré : la commutation
 
@@ -82,7 +82,7 @@ Une fois le courrier au bureau distributeur, il existe 2 choix :
 
 Avec ces nouveaux éléments, l'algorithme est modifié:
 
-1. Je met l'enveloppe dans la boite aux lettres de Saint-Médard-en-Jalles
+1. Je dépose l'enveloppe dans la boite aux lettres de Saint-Médard-en-Jalles
 2. Un facteur récupère l'enveloppe et la transporte jusqu'au bureau distributeur du département
 3. Un facteur récupère l'enveloppe au bureau distributeur
 4. Mon destinataire récupère l'enveloppe dans la boite aux lettres de Démuin
@@ -104,12 +104,12 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 
 1. L’expéditeur dépose le courrier en partance dans la boite aux lettres `33160`
 2. Le courrier est automatiquement acheminé dans la boite aux lettres `33000`
-3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite au lettres `80` + `000` = `80000`
+3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite aux lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
 > Dans l'analogie avec un réseau IP, le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
 
-Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. en effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
+Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. En effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
 
 ### Algorithme de redirection du courrier : le routage
 
@@ -136,17 +136,17 @@ Exemple de tableau des redirections connues du département `33` :
 | ...                      | ...                    |
 | `80`                     | `24`                   |
 
-Voici comment fonctionne ce tableau : lors de l’expédition d'un courrier depuis le départements `33` à destination du département `87`, on sait que le plus court chemin est par le département `24` donc on transmet le courrier au bureau distributeur du département `24`, qui transmettra alors directement au bureau distributeur du département `87` qui lui est limitrophe.
+Voici comment fonctionne ce tableau : lors de l’expédition d'un courrier depuis le département `33` à destination du département `87`, on sait que le plus court chemin est par le département `24` donc on transmet le courrier au bureau distributeur du département `24`, qui transmettra alors directement au bureau distributeur du département `87` qui lui est limitrophe.
 
-Chaque département traversé possède donc son propre tableau optimisé des départements associé au département limitrophe vers lequel envoyer le courrier. Si jamais un bureau d'un département se mettait subitement en grève, le tableau des département limitrophes serait alors recalculé. En France, il y a très souvent au moins 2 département limitrophes, donc on peut facilement trouver un moyen de contourner le département en grève. De la même façon, on peut imaginer associer un *poids* à chaque route. Par exemple, un département montagneux pourra avoir un poids plus élevé qu'un département en plaine. L'algorithme prendra alors en compte ces paramètres afin de calculer le prochain département.
+Chaque département traversé possède donc son propre tableau optimisé des départements associé au département limitrophe vers lequel envoyer le courrier. Si jamais un bureau d'un département était subitement fermé, le tableau des départements limitrophes serait alors recalculé. En France, il y a très souvent au moins 2 départements limitrophes, donc on peut facilement trouver un moyen de contourner le département fermé. De la même façon, on peut imaginer associer un *poids* à chaque route. Par exemple, un département montagneux pourra avoir un poids plus élevé qu'un département en plaine. L'algorithme prendra alors en compte ces paramètres afin de calculer le prochain département.
 
 Avec cet algorithme de redirection de proche en proche :
 
 1. L’expéditeur dépose le courrier en partance dans la boite aux lettres `33160`
 2. Le courrier est automatiquement acheminé dans la boite aux lettres `33000`
 3. On cherche dans la table de routage le meilleur département limitrophe pour `80110` : `80`->`24`, on envoie donc le courrier vers `24000`
-4. Le courier arrive à `24000` qui cherche dans sa table de routage: `80110` : `80`->`87` et envoie donc le courrier à `87000`
-5. Chaque bureau distributeur de département envoie de proche en proche jusqu'au buteau destinataire `8000.`
+4. Le courrier arrive à `24000` qui cherche dans sa table de routage : `80110` : `80`->`87` et envoie donc le courrier à `87000`
+5. Chaque bureau distributeur de département envoie de proche en proche jusqu'au bureau destinataire `8000.`
 6. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
 ![Alt text](images/saint-medart-demuin-routage-tableau.jpg)
@@ -156,17 +156,17 @@ Avec cet algorithme de redirection de proche en proche :
 
 Ce système de routage a beaucoup d'avantages :
 
-- Une fois le tableau de redirection calculé, il n'y a pas besoin d'autorité centrale pour prendre les décision d'itinéraire. Le système est ainsi extrêmement résiliant.
-- Le système n'a pas besoin de l'historique de passage d'un courrier dans les différent département. L'enveloppe de courrier n'a pas besoin d'être modifiée pendant son parcours
+- Une fois le tableau de redirection calculé, il n'y a pas besoin d'autorité centrale pour prendre les décisions d'itinéraire. Le système est ainsi extrêmement résiliant.
+- Le système n'a pas besoin de l'historique de passage d'un courrier dans les différents département. L'enveloppe de courrier n'a pas besoin d'être modifiée pendant son parcours
 - Le système peut stocker plusieurs routes possibles pour une même destination, et il peut aussi s'adapter à l'ajout et la suppression de département intermédiaires.
 
 ### Le cas spécial des départements d'outre-mer : les sous-réseaux
 
-Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux code postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles**! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numero de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
+Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numéros de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
 
-Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits : **"augmenter" à 3 digits le numéro du département, et "réduire" à 2 digits l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 digits, mais en contrepartie, nous sommes limité à identifier moins de 99 communes par département.
+Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits : **"augmenter" à 3 digits le numéro du département, et "réduire" à 2 digits l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 digits, mais en contrepartie, nous sommes limités à identifier moins de 99 communes par département.
 
-| Commune                | Code postal | Département | commune |
+| Commune                | Code postal | Département | Commune |
 | ---------------------- | ----------- | ----------- | ------- |
 | Saint-Médard-en-Jalles | `33160`     | `33`        | `160`   |
 | Démuin                 | `80110`     | `80`        | `110`   |
@@ -184,7 +184,7 @@ Pour adapter ces nouveaux identifiants au système de **commutation** et de **ro
 | `97114​`                  | 3                                          | `97100`                            |
 | `97460​`                  | 3                                          | `97400`                            |
 
-- Au niveau des tableaux de redirection, chaque bureau de distribution doit également connaître le nombre de digits à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grand.
+- Au niveau des tableaux de redirection, chaque bureau de distribution doit également connaître le nombre de digits à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grands.
 
 | Code postal de la commune | Nombre de digit identifiant le département | Département |
 | ------------------------- | ------------------------------------------ | ----------- |
@@ -195,64 +195,67 @@ Pour adapter ces nouveaux identifiants au système de **commutation** et de **ro
 
 > Dans l'analogie avec un réseau IP, le nombre de digit identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
 
-
 ## Application des notions précédentes aux réseaux IP (Internet Protocol)
 
 ### Le datagramme IP
 
+Lorsque 2 appareils (ou **nœuds**) du réseau veulent communiquer, ils doivent s'envoyer une certaine quantité de données. Pour commencer, les données vont être d'abord découpées en petits morceaux de plus petites tailles appelés **paquets**. Au dessus de chaque petit paquet de données, on ajoute des informations supplémentaires, comme l'adresse de destination et l'adresse de retour, ainsi que d'autres données utiles à la transmission. On dit alors que l'on *encapsule* les données, ou encore que l'on rajoute un *entête* au paquet.
 
+> C'est l'équivalent de mettre un courrier dans une enveloppe dans l'exemple du service postal.
 
-Lorsque 2 appareils (ou **nœuds**) du réseau veulent communiquer, ils doivent s'envoyer une certaine quantité de donnée. Pour commencer, les données vont être découpées en petits morceaux de petites tailles appelés **paquets**. On ajoute à ces données "brutes" des données supplémentaires, comme l'adresse de destination et l'adresse de retour, ainsi que d'autres données utiles à la transmission.
-
-> C'est l'équivalent du courrier dans une enveloppe dans l'exemple du service postal.
-
-Ils sont ensuite envoyé sur le réseaux et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajets.
+Ils sont ensuite envoyés sur le réseau et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajet.
 
 Le destinataire reçoit ces petits paquets potentiellement dans le désordre et doit rassembler les données dans l'ordre pour reconstruire le message originel.
 
 ### L'adresse IP
 
-Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez grande pour que Internet puisse fonctionner.
+Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez nombreuses pour qu'Internet puisse fonctionner.
 
-Une adresse IP version 4 (IPv4) est constitué de 32 bits et peux donc décrire $2^{32}$ addresses, soit à peu près 2 milliards. Ce chiffre parait gros, mais finalement assez peu à l'échelle d'Internet.
+Le protocole IP, qui signifie *Internet Protocol* (que l'on pourrait traduire par *protocole inter-réseau*), est le protocole qui va permettre la remise d'un paquet de donnés à une adresse du réseau. Il existe aujourd'hui deux versions du protocoles IP : IPv4 et IPv6. Ces protocoles sont incompatibles entre eux, n'utilisent pas le même format d'adresse et qui ont des entêtes et un fonctionnement légèrement différent.
 
-Une adresse IP version 6 (IPv6) est constitué de 128 bits et peux donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions (oui, c'est beaucoup!). Il devrait remplacer IPv4 un jour.
+- Une adresse IP dans IPv4 est constituée de 32 bits et peut donc décrire $2^{32}$ addresses, soit à peu près 4 milliards, ce qui paraissait suffisant lors de sa création. Cependant avec tous les nouveaux usages, ce chiffre a explosé, menaçant même Internet de pénurie d'adresses disponibles.
 
-IPv6 est légèrement plus complexe que IPv4, **nous allons donc terminer les explications avec IPv4 uniquement**. Les mêmes notions s'appliquent avec IPv6.
+- Une adresse IP dans IPv6 est constituée de 128 bits et peut donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions. Ce protocole a été créé pour résoudre les limites de IPv4, et au passage lui ajouter quelques fonctionnalités, notamment pour augmenter la sécurité.
 
-Une adresse IPv4 s'écrit généralement avec 4 octets de 8 bits convertis en décimal.
+Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais la migration est difficile car tout le matériel (routeurs, switchs, ...) doit être remplacé. De plus, ces deux protocoles ne sont pas compatibles entre eux, et la migration nécessite de mettre au point des stratégies de cohabitation qui ne sont pas toujours simples.
 
-Exemple : `193.43.55.67` = `11000001.00101011.00110111.01000011`
+En attendant l'adoption complète de IPv6 pour tout Internet, il existe beaucoup de techniques qui permettent de contourner les limites actuelles de IPv4. La technique la plus répandue étant simplement de ne pas connecter des sous-réseaux entiers à Internet. Ces réseaux *privés* peuvent utiliser toute la puissance d'IP tout en s'affranchissant de ses limites tant que les paquets ne sortent pas du réseau. En contrepartie, il faudra user de techniques complexes et limitées pour pouvoir communiquer avec le reste d'Internet (`Proxy`, `NAT`, etc...)
+
+Dans la suite de l'article, nous prendront le cas simple de IPv4, car les notions restent très similaires pour IPv6.
+
+Une adresse IP dans IPv4 s'écrit généralement avec 4 octets de 8 bits convertis en décimal.
+
+Exemple : `11000001 00101011 00110111 01000011` = `193.43.55.67`
 
 > C'est l'équivalent du code postal dans l'exemple du service postal
 
 ### La notation CIDR
 
-Comme nous l'avons vu avec les code postaux, une adresse contient 2 informations :
+Comme nous l'avons vu avec les codes postaux, une adresse contient 2 informations :
 
 - Le réseau dans lequel se trouve l'appareil (équivalent du département)
-- L'identifiant de l'appareil au sein de se réseau (équivalent de l'identifiant de commune)
+- L'identifiant de l'appareil au sein de ce réseau (équivalent de l'identifiant de commune)
 
-Seul les nœuds et les routeurs ont besoins de savoir comment découper l'adresse afin de router correctement les datagrammes. Les datagrammes eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur.
+Seuls les nœuds et les routeurs ont besoin de savoir comment découper l'adresse afin de router correctement les datagrammes. Les datagrammes eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur qui se contente des adresses IP sans plus d'information.
 
-Elle en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il va devoir découper intelligemment. Par exemple, il devra réfléchir pour avoir suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller sur internet, quel sous-réseau hébergera les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il va devoir découper intelligemment. Par exemple, il devra réfléchir pour avoir suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller sur internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
-Pendant longtemps, on a dissocié la notation de l'**adresse IP** et la notation de **masque de sous-réseau**, qui permet de déduire quel partie de l'adresse est le réseau ou l'identifiant:
+Pendant longtemps, on a dissocié la notation de l'**adresse IP** et la notation de **masque de sous-réseau**, qui permet de déduire quelle partie de l'adresse est le réseau ou l'identifiant :
 
 L'exemple le plus courant est d'utiliser le dernier octet comme identifiant du nœud :
 
-|                           | Représentation classique |
-| ------------------------- | ------------------------ |
-| Adresse du nœud           | 193.43.55.67             |
-| Masque de sous-réseau     | 255.255.255.0            |
-| Adresse du réseau         | 193.43.55.0              |
-| Nombre de nœuds possibles | 254                      |
+|                           | Représentation numérique | Représentation binaire                |
+| ------------------------- | ------------------------ | ------------------------------------- |
+| Adresse du nœud           | 193.43.55.67             | `11000001 00101011 00110111 01000011` |
+| Masque de sous-réseau     | 255.255.255.0            | `11111111 11111111 11111111 00000000` |
+| Adresse du réseau         | 193.43.55.0              | `11000001 00101011 00110111 00000000` |
+| Nombre de nœuds possibles | 254                      | `00000000` à `11111111`               |
 
 A défaut d'être simple, cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire.
 
-Heureusement, une notation plus compréhensible a été trouvé : le CIDR (*Classless Inter-Domain Routing*). Cette notation rajoute simplement un slach `/` suivi d'un nombre décimal pour indiquer la taille de l'adresse réseau.
+Heureusement, une notation plus compréhensible a été trouvée : le CIDR (*Classless Inter-Domain Routing*). Cette notation ajoute simplement un slash `/` suivi d'un nombre décimal indiquant la taille de l'adresse réseau.
 
-Même exemple que précédemment mais avec la notation CIDR, le masque `255.255.255.0` signifie "garde les 24 premiers digits binaires" :
+Reprenons le même exemple que précédemment mais avec la notation CIDR, le masque `255.255.255.0` est transformé en `/24` :
 
 |                           | Représentation CIDR |
 | ------------------------- | ------------------- |
@@ -260,7 +263,7 @@ Même exemple que précédemment mais avec la notation CIDR, le masque `255.255.
 | Adresse du réseau         | 193.43.55.0         |
 | Nombre de nœuds possibles | 254                 |
 
-> Pour bien comprendre la notion de CIDR, il faut faire le parallèle avec la notion de département sur 2 ou 3 chiffres dans l'exemple du service postal.
+> Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
 
 ### Configuration des nœuds
 
