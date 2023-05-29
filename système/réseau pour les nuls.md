@@ -203,9 +203,9 @@ Lorsque 2 appareils (ou **nœuds**) du réseau veulent communiquer, ils doivent 
 
 > C'est l'équivalent de mettre un courrier dans une enveloppe dans l'exemple du service postal.
 
-Ils sont ensuite envoyés sur le réseau et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajet.
+Ils sont ensuite envoyés sur le réseau et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajet. Le destinataire reçoit ces petits paquets potentiellement dans le désordre et doit rassembler les données dans l'ordre pour reconstruire le message originel.
 
-Le destinataire reçoit ces petits paquets potentiellement dans le désordre et doit rassembler les données dans l'ordre pour reconstruire le message originel.
+Dans le langage courant, on utilise le mot *paquet* pour désigner aussi bien la donnée transportée que le datagramme dans son ensemble.
 
 ### L'adresse IP
 
@@ -236,7 +236,7 @@ Comme nous l'avons vu avec les codes postaux, une adresse contient 2 information
 - Le réseau dans lequel se trouve l'appareil (équivalent du département)
 - L'identifiant de l'appareil au sein de ce réseau (équivalent de l'identifiant de commune)
 
-Seuls les nœuds et les routeurs ont besoin de savoir comment découper l'adresse afin de router correctement les datagrammes. Les datagrammes eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur qui se contente des adresses IP sans plus d'information.
+Seuls les nœuds et les routeurs ont besoin de savoir comment découper l'adresse afin de router correctement les paquets. Les paquets eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur qui se contente des adresses IP sans plus d'information.
 
 Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il va devoir découper intelligemment. Par exemple, il devra réfléchir pour avoir suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller sur internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
@@ -279,7 +279,7 @@ Cela implique que l'administrateur système n'a pas le droit à l'erreur :
 - Si l'administrateur donne au nœud une adresse qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données
 - Si l'administrateur donne la même adresse à 2 nœuds du même sous-réseau, les 2 nœuds réclameront les mêmes données et il est probable que chacun de ces nœuds ne reçoivent que des données tronquées
 
-Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le DCHP qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
+Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
 
 Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte est considérée comme un nœud du réseau indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
 
@@ -289,10 +289,10 @@ Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se
 
 Fonctionnement de ARP :
 
-1. Le switch reçoit un datagramme sur un de ces "port" (câble branché) à destination d'une adresse IP
+1. Le switch reçoit un paquet sur un de ces "ports" (carte réseau connecté à une autre carte réseau par un cable, à ne pas confondre avec la notion de "port" de `TCP` ou `UDP`) à destination d'une adresse IP
 2. Le switch envoie un message spécial à **tous** ces ports actifs pour demander à qui appartient l'adresse IP de destination
 3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même (le nœud peut être un routeur si l'adresse appartient à un autre sous-réseau)
-4. Le switch envoie le datagramme sur le câble de celui qui a répondu
+4. Le switch envoie le paquet sur le câble de celui qui a répondu
 5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent (on parle de **cache ARP**)
 
 En réalité, les switchs modernes ont des configurations qui peuvent être plus complexes, comme par exemple la possibilité de créer des sous-réseaux virtuels étalés entre plusieurs switchs : les VLAN (Virtual Local Area Network)
@@ -301,9 +301,15 @@ En réalité, les switchs modernes ont des configurations qui peuvent être plus
 
 ### Configuration des routeurs
 
-Un routeur ne connaît que les adresses des sous-réseaux qui se trouve derrière lui. Les autres sous-réseaux lui sont envoyés par les autres routeurs du réseau grâce à des protocoles spécifiques (comme BGP ou OSPF).
+Un routeur ne connaît en premier que les adresses des sous-réseaux qui lui sont directement connectés par ses câbles. Lorsqu'un routeur reçoit un paquet, il doit donc prendre une décision :
 
-Dans ses tables de routages, il peut associer des poids ou calculer les meilleures routes ou s'adapter à la perte d'un autre routeur.
+- Si l'adresse contient un sous-réseau qui lui est directement connecté, il recopie directement le paquet vers le réseau de destination.
+- Si l'adresse n'est pas sur un de ses sous-réseaux, il consulte sa table de routage pour déterminer le prochain routeur le plus proche de sa destination.
+- Si l'adresse n'est dans aucun des réseaux connus ni dans sa table de routage, il peut décider de l'envoyer vers une *route par defaut* (*Default Gateway*). Mais peut également être aussi configuré pour refuser de transmettre le paquet plus loin. Dans ce cas, le paquet est considéré comme perdu.
+
+Les tables de routage de chaque routeur peuvent être configurées manuellement sur des petits réseaux, mais plus généralement on utilisera des protocoles de construction dynamique des tables de routage, comme `BGP` ou `OSPF`.
+
+Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner d'information de leur propre configuration. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
 
 > Les table de routages correspondent aux tableaux de redirections dans l'analogie avec le système postal. Ils font le travail des bureaux de distribution lors du transfert de courrier vers un département limitrophe.
 
