@@ -1,9 +1,8 @@
-# Comprendre le réseau quand on y connaît vraiment rien
+# Comprendre le procole IP quand on est pas un administrateur réseau.
 
-- [Comprendre le réseau quand on y connaît vraiment rien](#comprendre-le-réseau-quand-on-y-connaît-vraiment-rien)
-  - [Notions couvertes](#notions-couvertes)
+- [Comprendre le procole IP quand on est pas un administrateur réseau.](#comprendre-le-procole-ip-quand-on-est-pas-un-administrateur-réseau)
+  - [Introduction](#introduction)
   - [L'analogie de la remise de courrier](#lanalogie-de-la-remise-de-courrier)
-    - [Avertissement](#avertissement)
     - [Hypothèses de départ](#hypothèses-de-départ)
     - [Algorithme de remise de courrier primitif](#algorithme-de-remise-de-courrier-primitif)
     - [Algorithme de courrier amélioré : la commutation](#algorithme-de-courrier-amélioré--la-commutation)
@@ -18,23 +17,24 @@
     - [Configuration des routeurs](#configuration-des-routeurs)
     - [Les paquets spéciaux ICMP](#les-paquets-spéciaux-icmp)
     - [Le _Time To Live_](#le-time-to-live)
-    - [Exemple complet](#exemple-complet)
+    - [Exemple d'architecture réseau](#exemple-darchitecture-réseau)
   - [Conclusion](#conclusion)
 
-## Notions couvertes
+## Introduction
 
-Le but de cet article est de comprendre les notions fondamentales d'un réseau TCP/IP.
+Quand on n'est pas administrateur réseau, il nous arrive de devoir manipuler des adresses IP sans trop comprendre comment tout cela fonctionne. Et j'ai toujours trouvé que la plupart des cours qu'on peut trouver sur Internet se concentrent un peu trop sur l'aspect technique, comme la manipulation de _bits_, la spécification des _headers_ ou la définitition des couches _OSI_...
 
-- Commutation de datagrammes
-- Routage de datagrammes
-- Adresse IP
-- CIDR et masque de sous-réseau
+Je suis persuadé qu'il est possible de saisir le fonctionnement général du protocole IP sans avoir besoin de savoir d'entrer dans les arcanes des cartes réseaux. En tant que developpeurs, vous serez mieux préparés pour discuter avec un administrateur réseau ou mieux comprendre certains messages d'erreurs renvoyés par votre application.
+
+Dans cet article, nous allons donc essayer de répondre simplement à des questions comme :
+
+- _Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?_
+- _Pourquoi dit-on que Internet est décentralisé et robuste ?_
+- _J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par defaut" !!!_
 
 ## L'analogie de la remise de courrier
 
-### Avertissement
-
-Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia https://fr.wikipedia.org/wiki/Code_postal_en_France.
+> Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia https://fr.wikipedia.org/wiki/Code_postal_en_France.
 
 ### Hypothèses de départ
 
@@ -335,7 +335,7 @@ Pour palier ce problème de confiance, chaque paquet produit par l'émetteur pos
 
 On notera que ici aussi, il est possible de détourner cette noton de `TTL` afin d'obtenir des informations sur les routeurs qu'un paquet traverse jusqu'à sa destination. Par exemple, si je veux connaître l'adresse IP du troisième routeur traversé par mes paquets, je peux forcer le `TTL` à 3. Le troisième routeur traversé verra le `TTL` à 0 et renverra un paquet ICMP avec son adresse dans le champ `source`. C'est exactement le fonctionnement de la commande `traceroute` qui envoie successivement des paquets avec un `TTL` de 1, puis 2, puis 3, etc... Là encore il est facile de bloquer ces types de paquets si l'on considère que c'est une faille de sécurité.
 
-### Exemple complet
+### Exemple d'architecture réseau
 
 ![Alt text](images/nsi_term_archi_rout_1.png)
 
