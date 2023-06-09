@@ -51,7 +51,7 @@ Pour rappel, un code postal est constitué d'un numéro de département par ses 
 | Saint-Médard-en-Jalles | `33160`     | `33`        | `160`                  |
 | Démuin                 | `80110`     | `80`        | `110`                  |
 
-Sur l'enveloppe au départ de Bordeaux, nous indiquons simplement le code postal de la commune de destination, et au dos nous écrivons notre propre code postal pour que le destinataire puisse nous répondre.
+Sur l'enveloppe au départ de Saint-Médard-en-Jalles, nous indiquons simplement le code postal de la commune de destination, et au dos nous écrivons notre propre code postal pour que le destinataire puisse nous répondre.
 
 Exemple de courrier à envoyer :
 
