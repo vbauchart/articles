@@ -6,7 +6,7 @@
     - [Hypothèses de départ](#hypothèses-de-départ)
     - [Algorithme de remise de courrier primitif](#algorithme-de-remise-de-courrier-primitif)
     - [Algorithme de courrier amélioré : la commutation](#algorithme-de-courrier-amélioré--la-commutation)
-    - [Algorithme de redirection du courrier : le routage](#algorithme-de-redirection-du-courrier--le-routage)
+    - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
     - [Le datagramme IP](#le-datagramme-ip)
@@ -22,29 +22,32 @@
 
 ## Introduction
 
-Quand on n'est pas administrateur réseau, il nous arrive de devoir manipuler des adresses IP sans trop comprendre comment tout cela fonctionne. Et j'ai toujours trouvé que la plupart des cours qu'on peut trouver sur Internet se concentrent un peu trop sur l'aspect technique, comme la manipulation de _bits_, la spécification des _headers_ ou la définitition des couches _OSI_...
+Alors que la plupart ne sont pas des experts réseau, il arrive souvent aux développeurs d'application de devoir envoyer ou recevoir des données sur le réseau. La plupart du temps, la seule connaissance nécessaire est de savoir ouvrir un `socket` réseau. Mais en cas de problème, un novice sera démuni pour comprendre un message d'erreur ou vérifier la configuration d'un serveur.
 
-Je suis persuadé qu'il est possible de saisir le fonctionnement général du protocole IP sans avoir besoin de savoir d'entrer dans les arcanes des cartes réseaux. En tant que developpeurs, vous serez mieux préparés pour discuter avec un administrateur réseau ou mieux comprendre certains messages d'erreurs renvoyés par votre application.
+La plupart des cours qu'on peut trouver sur Internet se concentrent un peu trop sur l'aspect technique, comme la manipulation de _bits_, la spécification des _headers_ ou la définition des couches _OSI_... Je suis persuadé qu'il est possible de saisir le fonctionnement général d'un réseau IP sans avoir besoin de savoir d'entrer dans les arcanes des cartes réseaux.
+
+Avec ces quelques explications, vous serez mieux préparés pour discuter avec un expert réseau ou mieux comprendre certains messages d'erreurs renvoyés par votre application.
 
 Dans cet article, nous allons donc essayer de répondre simplement à des questions comme :
 
 - _Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?_
 - _Pourquoi dit-on que Internet est décentralisé et robuste ?_
+- _Ma box internet, c'est un switch ou un routeur?_
 - _J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par defaut" !!!_
 
 ## L'analogie de la remise de courrier
 
-> Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia https://fr.wikipedia.org/wiki/Code_postal_en_France.
+> Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
 
 ### Hypothèses de départ
 
 Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons le comparer à la remise d'un courrier par le service postal.
 
-Nous allons donc imaginer la mise en place d'un service postal fictif à l'échelle de la France.
+Nous allons donc imaginer la mise en place d'un service postal fictif simplifié à l'extrême. Pour cela nous imaginons qu'il n'y a qu'une seule boite au lettre par commune,et nous allons étudier comment une commune peut envoyer un courrier à une autre commune. Nous oublions totalement le reste de l'adresse qui ne nous intéresse pas pour l'exemple.
 
-Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Pour simplifier l'analogie, nous allons simplement considérer la remise de courrier entre deux communes avec leurs codes postaux respectifs. Le courrier doit d'abord être déposé dans la boite aux lettres de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite aux lettres de la commune de destination.
+Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Le courrier est d'abord être déposé dans la boite aux lettres de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite aux lettres de la commune de destination.
 
-Pour rappel, un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
+De plus, un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
 
 | Commune                | Code postal | Département | Identifiant de commune |
 | ---------------------- | ----------- | ----------- | ---------------------- |
@@ -71,11 +74,15 @@ Voici donc notre premier algorithme sans aucune contrainte :
 Voici le trajet qui sera effectué par notre courrier :
 ![Alt text](images/saint-medart-demuin-direct.jpg)
 
-Avec cet algorithme, il faut effectuer autant de trajet qu'il y a de courrier à remettre. Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut établir des câbles réseaux entre chaque commune de la carte, soit pour $N$ communes, nous aurions besoin de $N^N$ câbles.
+Cet algorithme n'est pas optimal, car il faut effectuer **autant de trajet qu'il y a de courriers à remettre**.
+
+Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut établir des câbles réseaux entre chaque commune de la carte, soit pour $N$ communes, nous aurions besoin d'un ordre de grandeur de $N^N$ câbles.
 
 ### Algorithme de courrier amélioré : la commutation
 
-Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Pour faciliter la numérotation, la commune du bureau distributeur aura un code postal un peu spécial composé du numéro du département puis de `000`.
+Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leur destination, et pouvoir ainsi grouper les courriers que l'on doit emmener même bureau distributeur de destination.
+
+Pour faciliter la numérotation, la commune du bureau distributeur aura un code postal un peu spécial composé du numéro du département puis de `000`.
 
 Une fois le courrier au bureau distributeur, il existe 2 choix :
 
@@ -93,7 +100,7 @@ Voici le nouveau trajet effectué par le courrier :
 
 ![Alt text](images/saint-medart-demuin-prefecture.jpg)
 
-Voici la liste des nouveaux codes postaux maintenant impliqués :
+Voici la liste des nouveaux codes postaux traversés :
 
 |                     | Commune                | Code postal |
 | ------------------- | ---------------------- | ----------- |
@@ -110,6 +117,8 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
 > Dans l'analogie avec un réseau IP, le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
+
+Mais il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. En effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin d'un ordre de grandeur de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
 
 Bien que nous ayons déjà optimisé notre système postal, il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. En effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
 
