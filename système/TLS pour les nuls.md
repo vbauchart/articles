@@ -74,7 +74,7 @@ sequenceDiagram
       Cyrano ->> Christian: discours
       Christian ->> Roxane: discours
       Roxane ->> Christian: amour
-      Christian -->> Cyrano: rien
+      Christian --x Cyrano: rien
 ```
 
 
