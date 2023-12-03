@@ -2,15 +2,18 @@
 
 - [Comprendre le procole IP quand on est pas un administrateur réseau.](#comprendre-le-procole-ip-quand-on-est-pas-un-administrateur-réseau)
   - [Introduction](#introduction)
-  - [L'analogie de la remise de courrier](#lanalogie-de-la-remise-de-courrier)
-    - [Hypothèses de départ](#hypothèses-de-départ)
-    - [Algorithme de remise de courrier primitif](#algorithme-de-remise-de-courrier-primitif)
-    - [Algorithme de centralisation du courrier : la commutation](#algorithme-de-centralisation-du-courrier--la-commutation)
+  - [Avertissements préliminaires](#avertissements-préliminaires)
+  - [Description de notre système postal simplifié](#description-de-notre-système-postal-simplifié)
+  - [ALgorithme primitif](#algorithme-primitif)
+    - [Remise de courrier simple](#remise-de-courrier-simple)
+    - [Appliqués à un réseau IP](#appliqués-à-un-réseau-ip)
+  - [Algorithme de centralisation](#algorithme-de-centralisation)
+    - [Création des départements et des bureaux distributeurs](#création-des-départements-et-des-bureaux-distributeurs)
+    - [Appliqué à un réseau IP : les commutateurs](#appliqué-à-un-réseau-ip--les-commutateurs)
     - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
   - [Les nœuds du réseau](#les-nœuds-du-réseau)
-    - [Le paquet de donnée](#le-paquet-de-donnée)
     - [L'adresse IP](#ladresse-ip)
     - [Le sous-réseau](#le-sous-réseau)
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
@@ -38,11 +41,13 @@ Dans cet article, nous allons donc essayer de répondre simplement à des questi
 - _Ma box internet, c'est un switch ou un routeur?_
 - _J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par defaut" !!!_
 
-## L'analogie de la remise de courrier
+## Avertissements préliminaires
 
-> Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
+Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
 
-### Hypothèses de départ
+J'imagine également que certaines de mes analogies vont faire sauter au plafond les puristes des couches OSI et autres administrateurs réseau, mais souvenez-vous que pour vulgariser, on est bien obliger d'éluder certaines vérités trop complexes !
+
+## Description de notre système postal simplifié
 
 Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons le comparer à la remise d'un courrier par le service postal.
 
@@ -66,7 +71,9 @@ Exemple de courrier à envoyer :
 | Expéditeur   | Saint-Médard-en-Jalles | 33160       |
 | Destinataire | Démuin                 | 80110       |
 
-### Algorithme de remise de courrier primitif
+## ALgorithme primitif
+
+### Remise de courrier simple
 
 Voici donc notre premier algorithme sans aucune contrainte :
 
@@ -79,9 +86,13 @@ Voici le trajet qui sera effectué par notre courrier :
 
 Cet algorithme n'est pas optimal, car il faut effectuer **autant de trajet qu'il y a de courriers à remettre**.
 
-Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut établir des câbles réseaux entre chaque commune de la carte, soit pour $N$ communes, nous aurions besoin d'un ordre de grandeur de $N^N$ câbles.
+### Appliqués à un réseau IP
 
-### Algorithme de centralisation du courrier : la commutation
+Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut connecter des câbles réseaux entre tous les équipements du réseau. On voit bien que ce n'est pas tenable, et tous les mécanismes que nous allons décrire dans la suite vont permettre d'optimiser cette remise de paquet.
+
+## Algorithme de centralisation
+
+### Création des départements et des bureaux distributeurs
 
 Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leur destination, et pouvoir ainsi grouper les courriers que l'on doit emmener même bureau distributeur de destination.
 
@@ -119,9 +130,10 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite aux lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-> Dans l'analogie avec un réseau IP, le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
+### Appliqué à un réseau IP : les commutateurs
 
-Mais il reste encore à trouver une optimisation pour acheminer le courrier entre chaque bureau distributeur. En effet, dans l'état actuel de notre algorithme, pour $M$ bureaux distributeur, nous aurions besoin d'un ordre de grandeur de $M^M$ câbles pour relier tous les bureaux distributeurs entre eux.
+Dans l'analogie avec un réseau IP, le mécanisme appelé le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
+
 
 ### Algorithme d'acheminement du courrier : le routage
 
@@ -224,16 +236,6 @@ Tous les appareils ayant une ou plusieurs cartes réseaux sont appelés des **n�
 Les développeurs vont plus naturellement travailler sur les nœuds **périphériques** du réseau, autrement dit les nœuds portant l'application, soit un client ou un serveur.
 
 Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les nœuds périphériques. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
-
-### Le paquet de donnée
-
-Lorsque 2 appareil du réseau veulent communiquer, ils doivent s'envoyer une certaine quantité de données. Pour commencer, les données vont être d'abord découpées en petits morceaux de plus petites tailles appelés **paquets** (on parle aussi de _datagrammes_).
-
-Au dessus de chaque petit paquet de données, on ajoute des informations supplémentaires, comme l'adresse de destination et l'adresse de retour, ainsi que d'autres données utiles à la transmission. On dit alors que l'on _encapsule_ les données, ou encore que l'on rajoute un _entête_ au paquet.
-
-> C'est l'équivalent de mettre un courrier dans une enveloppe dans l'exemple du service postal.
-
-Ils sont ensuite envoyés sur le réseau et transitent au travers des **switchs** et **routeurs** rencontrés pendant son trajet. Tous les paquets ne vont pas forcement emprunter les mêmes chemin, et le destinataire reçoit ces petits paquets potentiellement dans le désordre. Charge au destinataire de rassembler les données dans l'ordre pour reconstituer le message originel.
 
 ### L'adresse IP
 
