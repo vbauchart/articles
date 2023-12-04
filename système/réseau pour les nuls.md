@@ -7,17 +7,15 @@
     - [Algorithme de remise de courrier primitif](#algorithme-de-remise-de-courrier-primitif)
     - [Algorithme de centralisation du courrier : la commutation](#algorithme-de-centralisation-du-courrier--la-commutation)
     - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
-    - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
+    - [Le cas spécial des départements d'outre-mer : modification de la composition du code postal](#le-cas-spécial-des-départements-doutre-mer--modification-de-la-composition-du-code-postal)
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
   - [Les nœuds du réseau](#les-nœuds-du-réseau)
-    - [Le paquet de donnée](#le-paquet-de-donnée)
+    - [Le paquet de données](#le-paquet-de-données)
     - [L'adresse IP](#ladresse-ip)
-    - [Le sous-réseau](#le-sous-réseau)
-    - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
-    - [La notation CIDR](#la-notation-cidr)
-    - [Configuration des appareil](#configuration-des-appareil)
+    - [Configuration des appareils](#configuration-des-appareils)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
+    - [Le sous-réseau](#le-sous-réseau)
     - [Les paquets spéciaux ICMP](#les-paquets-spéciaux-icmp)
     - [Le _Time To Live_](#le-time-to-live)
     - [Exemple d'architecture réseau](#exemple-darchitecture-réseau)
@@ -25,13 +23,13 @@
 
 ## Introduction
 
-Alors que la plupart ne sont pas des experts réseau, il arrive souvent aux développeurs d'application de devoir envoyer ou recevoir des données sur le réseau. La plupart du temps, la seule connaissance nécessaire est de savoir ouvrir un `socket` réseau. Mais en cas de problème, un novice sera démuni pour comprendre un message d'erreur ou vérifier la configuration d'un serveur.
+Alors que la plupart d'entre nous ne sont pas des experts réseau, il arrive souvent aux développeurs d'application de devoir envoyer ou recevoir des données sur le réseau. La plupart du temps, la seule connaissance nécessaire est de savoir ouvrir un `socket` réseau. Mais en cas de problème, un novice sera démuni pour comprendre un message d'erreur ou vérifier la configuration d'un serveur.
 
-La plupart des cours qu'on peut trouver sur Internet se concentrent un peu trop sur l'aspect technique, comme la manipulation de _bits_, la spécification des _headers_ ou la définition des couches _OSI_... Je suis persuadé qu'il est possible de saisir le fonctionnement général d'un réseau IP sans avoir besoin de savoir d'entrer dans les arcanes des cartes réseaux.
+La plupart des explications qu'on peut trouver sur Internet se concentrent un peu trop rapidement sur l'aspect profond, comme la manipulation de _bits_, la spécification des _headers_ ou la définition des couches _OSI_... Je suis persuadé qu'il est possible de saisir le fonctionnement général d'un réseau IP sans avoir besoin de savoir d'entrer dans les arcanes des cartes réseaux. Je vous propose donc ici une vision **vulgarisée** d'un réseau IP, donc forcement simplifiée et incomplète.
 
 Avec ces quelques explications, vous serez mieux préparés pour discuter avec un expert réseau ou mieux comprendre certains messages d'erreurs renvoyés par votre application.
 
-Dans cet article, nous allons donc essayer de répondre simplement à des questions comme :
+Dans cet article, nous allons aborder les notions qui permettrons de répondre simplement à des questions comme :
 
 - _Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?_
 - _Pourquoi dit-on que Internet est décentralisé et robuste ?_
@@ -40,17 +38,20 @@ Dans cet article, nous allons donc essayer de répondre simplement à des questi
 
 ## L'analogie de la remise de courrier
 
+Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous allons imaginer la remise remise d'un courrier par le service postal.
+
 > Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
 
 ### Hypothèses de départ
 
-Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons le comparer à la remise d'un courrier par le service postal.
+Nous allons donc imaginer la mise en place d'un service postal fictif simplifié à l'extrême :
 
-Nous allons donc imaginer la mise en place d'un service postal fictif simplifié à l'extrême. Pour cela nous imaginons qu'il n'y a qu'une seule boite au lettre par commune,et nous allons étudier comment une commune peut envoyer un courrier à une autre commune. Nous oublions totalement le reste de l'adresse qui ne nous intéresse pas pour l'exemple.
+- Il n'y a qu'une seule boite au lettre par commune
+- Chaque boite au lettre est identifié par son code postal uniquement
 
 Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Le courrier est d'abord être déposé dans la boite aux lettres de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite aux lettres de la commune de destination.
 
-De plus, un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
+Un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
 
 | Commune                | Code postal | Département | Identifiant de commune |
 | ---------------------- | ----------- | ----------- | ---------------------- |
@@ -83,7 +84,7 @@ Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut ét
 
 ### Algorithme de centralisation du courrier : la commutation
 
-Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leur destination, et pouvoir ainsi grouper les courriers que l'on doit emmener même bureau distributeur de destination.
+Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un unique "bureau distributeur" en charge de récupérer tous les courriers en partance ou à destination de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leurs destinations, et pouvoir ainsi grouper les courriers que l'on doit emmener au même bureau distributeur de destination.
 
 Pour faciliter la numérotation, la commune du bureau distributeur aura un code postal un peu spécial composé du numéro du département puis de `000`.
 
@@ -135,7 +136,7 @@ Parcours de notre courrier avec la nouvelle contrainte :
 
 Ce mécanisme semble avoir beaucoup d'avantages, car les bureaux distributeurs n'ont plus besoin de connaître l'ensemble des départements, mais il a un inconvénient **majeur** : comment savoir vers quel département suivant envoyer le courrier pour qu'il finisse par arriver au bon département de destination ? Et comment faire en sorte que ce parcours soit optimal, sans traverser des départements inutiles, ni créer des boucles ?
 
-Pour que le système fonctionne, chaque bureau distributeur doit recevoir un "tableau des redirections" **pré-calculé** de tous les départements possibles associé avec le département limitrophe vers lequel envoyer le courrier. Ainsi, lorsqu'un bureau distributeur reçoit un courrier, il lit le code postal de destination, en déduit le département de destination puis cherche dans le tableau le prochain département vers lequel faire transiter ce courrier.
+Pour que le système fonctionne, chaque bureau distributeur doit recevoir à l'avance un "tableau des redirections" **pré-calculé** de tous les départements possibles associé avec le département limitrophe vers lequel envoyer le courrier. Ainsi, lorsqu'un bureau distributeur reçoit un courrier, il lit le code postal de destination, en déduit le département de destination puis cherche dans le tableau le prochain département vers lequel faire transiter ce courrier.
 
 Exemple de tableau des redirections attribué au département `33` :
 
@@ -173,18 +174,20 @@ Avec cet algorithme de redirection de proche en proche :
 Ce système de routage a beaucoup d'avantages :
 
 - Une fois le tableau de redirection calculé, il n'y a pas besoin d'autorité centrale pour prendre les décisions d'itinéraire. Le système est ainsi extrêmement résiliant.
-- Le système n'a pas besoin de l'historique de passage d'un courrier dans les différents département. Il passe à son voisin et l'oublie.
+- Les bureaux distributeurs n'ont pas besoin de garder en mémoire qu'un courrier est passé par leur département. Il le passe à son voisin et l'oublie.
 - L'enveloppe de courrier n'a pas besoin d'être modifiée pendant son parcours.
 - Le système peut choisir plusieurs routes possibles pour une même destination, et il peut aussi s'adapter à l'ajout et la suppression de département intermédiaires.
 
-### Le cas spécial des départements d'outre-mer : les sous-réseaux
+### Le cas spécial des départements d'outre-mer : modification de la composition du code postal
 
-Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numéros de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
+Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numéros de département sur 3 digits, mais ce genre de changement est généralement très coûteux.
 
-Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits :
+Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes. Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits :
 
 1. **Réserver** le code `97` à l'ensemble des département d'outre-mer
-2. **Augmenter à 3 digits le code du département, et "réduire" à 2 digits l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 digits, mais en contrepartie, nous sommes limités à identifier moins de 99 communes par département.
+2. **Augmenter à 3 digits le code du département, et "réduire" à 2 digits l'identifiant de la commune**.
+
+Grâce à cette idée, nous gardons le format du code postal sur 5 digits, mais en contrepartie, nous sommes limités à identifier moins de 99 communes par département.
 
 | Commune                | Code postal | Département | Commune |
 | ---------------------- | ----------- | ----------- | ------- |
@@ -213,7 +216,7 @@ Pour adapter ces nouveaux identifiants aux systèmes de **commutation** et de **
 | `97114​`                  | 3                                          | `971`       |
 | `97460​`                  | 3                                          | `974`       |
 
-> Dans l'analogie avec un réseau IP, le nombre de digit identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
+> Dans l'analogie avec un réseau IP, le nombre de digit identifiant le département est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
 
 ## Application des notions précédentes aux réseaux IP (Internet Protocol)
 
@@ -221,11 +224,11 @@ Pour adapter ces nouveaux identifiants aux systèmes de **commutation** et de **
 
 Tous les appareils ayant une ou plusieurs cartes réseaux sont appelés des **nœuds du réseau**. Ils possèdent une adresse IP pour communiquer entre eux. Les ordinateurs, les smartphones, les serveurs , et même les routeurs, sont tous des nœuds de notre réseau.
 
-Les développeurs vont plus naturellement travailler sur les nœuds **périphériques** du réseau, autrement dit les nœuds portant l'application, soit un client ou un serveur.
+Les développeurs vont plus naturellement travailler sur les **nœuds périphériques** du réseau, autrement dit les nœuds portant l'application, soit un client ou un serveur.
 
-Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les nœuds périphériques. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
+Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les **nœuds périphériques**. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
 
-### Le paquet de donnée
+### Le paquet de données
 
 Lorsque 2 appareil du réseau veulent communiquer, ils doivent s'envoyer une certaine quantité de données. Pour commencer, les données vont être d'abord découpées en petits morceaux de plus petites tailles appelés **paquets** (on parle aussi de _datagrammes_).
 
@@ -239,17 +242,15 @@ Ils sont ensuite envoyés sur le réseau et transitent au travers des **switchs*
 
 Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez nombreuses pour qu'Internet puisse fonctionner.
 
-Le protocole IP, qui signifie _Internet Protocol_ (que l'on pourrait traduire par _protocole inter-réseau_), est le protocole qui va permettre la remise d'un paquet de donnés à une adresse du réseau. Il existe aujourd'hui deux versions du protocoles IP : IPv4 et IPv6. Ces protocoles sont incompatibles entre eux, n'utilisent pas le même format d'adresse et qui ont des entêtes et un fonctionnement légèrement différent.
+Le protocole IP (pour _Internet Protocol_, que l'on pourrait traduire par _protocole inter-réseau_), est le protocole qui va permettre la remise d'un paquet de donnés à une adresse du réseau.
+
+Les adresses d'un réseau IP sont simplement une suite d'octets.
+
+Il existe aujourd'hui deux versions du protocoles IP : IPv4 et IPv6. Ces protocoles sont incompatibles entre eux, n'utilisent pas le même format d'adresse et qui ont des entêtes et un fonctionnement légèrement différent.
 
 - Une adresse IP dans IPv4 est constituée de 32 bits et peut donc décrire $2^{32}$ addresses, soit à peu près 4 milliards, ce qui paraissait suffisant lors de sa création. Cependant avec tous les nouveaux usages, ce chiffre a explosé, menaçant même Internet de pénurie d'adresses disponibles.
 
 - Une adresse IP dans IPv6 est constituée de 128 bits et peut donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions. Ce protocole a été créé pour résoudre les limites de IPv4, et au passage lui ajouter quelques fonctionnalités, notamment pour augmenter la sécurité.
-
-Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais la migration est difficile car tout le matériel (routeurs, switchs, ...) doit être remplacé. De plus, ces deux protocoles ne sont pas compatibles entre eux, et la migration nécessite de mettre au point des **stratégies de cohabitation** qui ne sont pas toujours simples.
-
-En attendant l'adoption complète de IPv6 pour tout Internet, il existe beaucoup de techniques qui permettent de **contourner les limites actuelles de IPv4**. La technique la plus répandue étant simplement de ne pas connecter des sous-réseaux entiers à Internet. Ces réseaux **privés** peuvent utiliser toute la puissance d'IP tout en s'affranchissant de ses limites tant que les paquets ne sortent pas du réseau. En contrepartie, il faudra user de techniques complexes et/ou limitées pour pouvoir communiquer avec le reste d'Internet (`Proxy`, `NAT`, etc...)
-
-Pour faciliter la lecture, on utilise des représentation décimales pour IPv4 et hexadécimale pour les adresses IPv6.
 
 | Type         | Exemple                                   |
 | ------------ | ----------------------------------------- |
@@ -257,86 +258,42 @@ Pour faciliter la lecture, on utilise des représentation décimales pour IPv4 e
 | Adresse IPv4 | `193.43.55.67`                            |
 | Adresse IPv6 | `2001:0db8:0000:85a3:0000:0000:ac1f:8001` |
 
+Pour faciliter la lecture, on utilise une représentation décimale de chaque octet séparés par des points pour IPv4 et hexadécimale par groupe de 4 octets séparés par des deux points pour les adresses IPv6.
+
+Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais la migration est difficile car tout le matériel (routeurs, switchs, ...) doit être remplacé. De plus, ces deux protocoles ne sont pas compatibles entre eux, et la migration nécessite de mettre au point des **stratégies de cohabitation** qui ne sont pas toujours simples.
+
+En attendant l'adoption complète de IPv6 pour tout Internet, il existe beaucoup de techniques qui permettent de **contourner les limites actuelles de IPv4**. La technique la plus répandue étant simplement de ne pas connecter des sous-réseaux entiers à Internet. Ces réseaux **privés** peuvent utiliser toute la puissance d'IP tout en s'affranchissant de ses limites tant que les paquets ne sortent pas du réseau. En contrepartie, il faudra user de techniques complexes et/ou limitées pour pouvoir communiquer avec le reste d'Internet (`Proxy`, `NAT`, etc...)
+
 > **Pour des raisons de simplicité, nous continuerons les explication avec IPv4 uniquement**.
 > Les notions restent très similaires pour IPv6.
 
-### Le sous-réseau
+### Configuration des appareils
 
-Exactement comme pour les codes postaux qui contiennent un numéro de département et un identifiant de commune, une adresse IP contient 2 informations :
-
-- Le **sous-réseau** dans lequel se trouve l'appareil (équivalent du **département**)
-- L'**identifiant** de l'appareil au sein de ce réseau (équivalent de l'**identifiant de commune**)
-
-Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle : 
-
-| Type                         | Adresse complète | Sous réseau   | Identifiant |
-| ---------------------------- | ---------------- | ------------- | ----------- |
-| Code postal                  | `33160`          | `33000`       | `160`       |
-| Code postal d'Outre-mer      | `97114​`         | `97100`       | `14​`       |
-| Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `67`        |
-| Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `159.78`    |
-
-Seuls les appareils et les routeurs ont besoin de savoir comment découper l'adresse afin de router correctement les paquets. Les paquets eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur qui a besoin uniquement de l'adresse complète de destination, mais qui ne s'intéresse pas à la structure du réseau.
-
-Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
-
-De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas, c'est à dire à être vigilent qu'une adresse IP ne puisse pas appartenir à 2 réseaux différents.
-
-### Le masque de sous-réseau
-
-Pendant longtemps, pour retrouver l'adresse du réseau, on associait l'**adresse IP** avec un **masque binaire**, par exemple :
-
-|                       | Représentation décimale | Représentation binaire                |
-| --------------------- | ----------------------- | ------------------------------------- |
-| Adresse du nœud       | `193.43.55.67`          | `11000001 00101011 00110111 01000011` |
-| Masque de sous-réseau | `255.255.255.0`         | `11111111 11111111 11111111 00000000` |
-| Adresse du réseau     | `193.43.55.0`           | `11000001 00101011 00110111 00000000` |
-
-Dans cet notation, le **masque** permet de retrouver l'adresse du réseau en appliquant un `AND` binaire
-
-A défaut d'être simple, cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire.
-
-### La notation CIDR
-
-Heureusement, une notation plus compréhensible a été trouvée : le CIDR (_Classless Inter-Domain Routing_). Cette notation ajoute simplement un slash `/` suivi d'un nombre décimal indiquant la taille de l'adresse réseau.
-
-Reprenons le même exemple que précédemment mais avec la notation CIDR, le masque `255.255.255.0` est transformé en `/24` :
-
-|                             | Représentation CIDR |
-| --------------------------- | ------------------- |
-| Adresse du nœud             | 193.43.55.67/24     |
-| Adresse du réseau           | 193.43.55.0         |
-| Nombre d'appareil possibles | 254                 |
-
-> Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
-
-### Configuration des appareil
-
-Pour communiquer sur le réseau, un nœud est le seul responsable de sa propre adresse sur le réseau.
+Pour communiquer sur le réseau, l'administrateur réseau attribue à un appareil une adresse IP du sous-réseau dans lequel il se trouve. La configuration de son adresse est faite directement sur l'appareil. Aucun autre nœud du réseau n'a la liste complète des appareils.
 
 - Lorsqu'il enverra un datagramme, il ajoutera dans les meta-données sa propre adresse comme adresse de retour
-- Lorsque des datagrammes arrivent sur son sous-réseau, le nœud devra les réclamer au switch qui s'occupe de la distribution locale.
+- Lorsque des datagrammes arrivent sur son sous-réseau, l'appareil devra les réclamer au switch qui s'occupe de la distribution locale.
 
 > Selon l'analogie avec le système postal, chaque commune connaît son propre code postal
 
 Cela implique que l'administrateur système n'a pas le droit à l'erreur :
 
-- Si l'administrateur donne au nœud une adresse qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données
-- Si l'administrateur donne la même adresse à 2 appareil du même sous-réseau, les 2 appareil réclameront les mêmes données et il est probable que chacun de ces appareil ne reçoivent que des données tronquées
+- Si l'administrateur attribue à l'appareil une adresse qui ne correspond pas au réseau dans lequel il se trouve, il ne recevra jamais de données
+- Si l'administrateur donne la même adresse à 2 appareils du même sous-réseau, les 2 appareil réclameront les mêmes données et il est probable que chacun de ces appareil ne reçoivent que des données tronquées.
 
-Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
+Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer de manière unique les adresses aux nouveaux arrivant sur le réseau.
 
-Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte est considérée comme un nœud du réseau indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
+Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte est considérée comme un appareil indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
 
 ### Configuration des switchs
 
-Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les paquets à ceux qui les réclament grâce au **protocole ARP** (Address Resolution Protocol).
+Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contentent de distribuer localement les paquets à ceux qui les réclament grâce au **protocole ARP** (Address Resolution Protocol).
 
 Fonctionnement de ARP :
 
 1. Le switch reçoit un paquet sur un de ces "ports" (carte réseau connecté à une autre carte réseau par un cable, à ne pas confondre avec la notion de "port" de `TCP` ou `UDP`) à destination d'une adresse IP
-2. Le switch envoie un message spécial à **tous** ces ports actifs pour demander à qui appartient l'adresse IP de destination
-3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même (le nœud peut être un routeur si l'adresse appartient à un autre sous-réseau)
+2. Le switch envoie un message spécial à **tous** ses ports actifs pour demander à qui appartient l'adresse IP de destination
+3. L'appareil qui possède cette adresse répond à la demande en se désignant lui-même. Pendant cet appel, un routeur peux aussi répondre si la destination est sur un autre réseau !
 4. Le switch envoie le paquet sur le câble de celui qui a répondu
 5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent (on parle de **cache ARP**)
 
@@ -357,6 +314,45 @@ Les tables de routage de chaque routeur peuvent être configurées manuellement 
 Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner d'information de leur propre configuration. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
 
 > Les table de routages correspondent aux tableaux de redirections dans l'analogie avec le système postal. Ils font le travail des bureaux de distribution lors du transfert de courrier vers un département limitrophe.
+
+
+
+#TODO: Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux. De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas.
+
+
+### Le sous-réseau
+
+Un peu comme pour les codes postaux qui contiennent un numéro de département et un identifiant de commune, une adresse IP contient 2 informations :
+
+- Le **sous-réseau** dans lequel se trouve l'appareil (équivalent du **département**)
+- L'**identifiant** de l'appareil au sein de ce réseau (équivalent de l'**identifiant de commune**)
+
+> La notion de sous-réseau se confond souvent avec la notion de réseau, et il n'est pas rare de voir utiliser indifféremment les deux termes. Comme on nous allons le voir, un réseau est toujours le sous-réseau d'un autre réseau !
+
+Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle :
+
+| Type                         | Adresse complète | Nb de digit du sous-réseau | Sous-réseau   | Nb d'identifiant possibles dans ce sous-réseau |
+| ---------------------------- | ---------------- | -------------------------- | ------------- | ---------------------------------------------- |
+| Code postal                  | `33160`          | 2                          | `33000`       | 999                                            |
+| Code postal d'Outre-mer      | `97114​`         | 3                          | `97100`       | 99                                             |
+| Adresse IP d'un petit réseau | `193.43.55.67`   | 24 (en bits !)             | `193.43.55.0` | 254                                            |
+| Adresse IP d'un grand réseau | `145.12.149.78`  | 16                         | `145.12.0.0`  | 65534                                          |
+| Adresse IP d'un réseau moyen | `52.32.45.65`    | 20                         | `52.32.32.0`  | 4094                                           |
+
+> Sur le dernier exemple du tableau, on comprend qu'il n'est pas toujours facile de calculer les représentations décimales à partir du binaire. C'est pourquoi il existe des outils comme `ipcalc` qui permet des calculs rapides.
+
+Lorsqu'un appareil veut communiquer avec un autre appareil, il n'a besoin que de son adresse IP, par exemple :
+
+`52.32.45.65`
+
+Mais lorsqu’on configure un réseau et que l'on a besoin de connaitre le nombre de digit du sous-réseau, on utilisera la notation CIDR (_Classless Inter-Domain Routing_), c'est un dire un slash `/` suivi du nombre de bits :
+
+`52.32.45.65/20`
+
+Il arrive que l'on trouve encore des anciens systèmes qui se configurent avec un **masque binaire** de sous-réseau. Il s'agit d'une suite de `1` puis de `0` qui permettent de retrouver le sous-réseau par une opération `AND` binaire :
+
+IP: `52.32.45.65`
+Masque: `255.255.240.0`
 
 ### Les paquets spéciaux ICMP
 
