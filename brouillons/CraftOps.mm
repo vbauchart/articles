@@ -1,0 +1,144 @@
+<map version="1.0.1">
+<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
+<node COLOR="#000000" CREATED="1701076573748" ID="ID_109169753" MODIFIED="1701076628615" TEXT="CraftOps">
+<font NAME="SansSerif" SIZE="20"/>
+<hook NAME="accessories/plugins/AutomaticLayout.properties"/>
+<node COLOR="#0033ff" CREATED="1701076637661" ID="ID_1514553933" MODIFIED="1701076642867" POSITION="right" TEXT="Introduction">
+<edge STYLE="sharp_bezier" WIDTH="8"/>
+<font NAME="SansSerif" SIZE="18"/>
+<node COLOR="#00b439" CREATED="1701076657065" ID="ID_129317637" MODIFIED="1701076739231" TEXT="Musclez vos scripts d&apos;exploitation">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+</node>
+<node COLOR="#00b439" CREATED="1701076740314" ID="ID_1323911393" MODIFIED="1701076755780" TEXT="augmenter la qualit&#xe9; de votre exploitation">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+</node>
+</node>
+<node COLOR="#0033ff" CREATED="1701077949153" ID="ID_1834477559" MODIFIED="1701078643818" POSITION="right" TEXT="tactical patterns">
+<edge STYLE="sharp_bezier" WIDTH="8"/>
+<font NAME="SansSerif" SIZE="18"/>
+<node COLOR="#00b439" CREATED="1701077991353" ID="ID_526418656" MODIFIED="1701078643818" TEXT="immutable infrastructure">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701078003492" ID="ID_255941153" MODIFIED="1701078643818" TEXT="Docker">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701078005356" ID="ID_1806122830" MODIFIED="1701078643818" TEXT="AWS AMI">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701078013190" ID="ID_1620810948" MODIFIED="1701078643818" TEXT="Golden Images">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+<node COLOR="#00b439" CREATED="1701078088225" ID="ID_1104157771" MODIFIED="1701078643818" TEXT="dry &lt;&gt; coupling">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701080138123" ID="ID_752882598" MODIFIED="1701080160083" TEXT="external lib dependencies">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701266761691" ID="ID_1781314694" MODIFIED="1701266796739" TEXT="1 repository for all environnements">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+<node COLOR="#00b439" CREATED="1701078142127" ID="ID_1112465640" MODIFIED="1701078643818" TEXT="upstream/downstream">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+</node>
+<node COLOR="#00b439" CREATED="1701078573775" ID="ID_628269489" MODIFIED="1701078643828" TEXT="functionnal pattern">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701078598386" ID="ID_1774061660" MODIFIED="1701079769988" TEXT="indempotence vs orchestration">
+<font NAME="SansSerif" SIZE="14"/>
+<node COLOR="#111111" CREATED="1701245445519" ID="ID_1990382648" MODIFIED="1701245452417" TEXT="declaratif vs imp&#xe9;ratif"/>
+<node COLOR="#111111" CREATED="1701267425434" ID="ID_1705248299" MODIFIED="1701267431881" TEXT="GitOps"/>
+</node>
+<node COLOR="#990000" CREATED="1701078605065" ID="ID_366944963" MODIFIED="1701078643828" TEXT="&quot;pure&quot; infra modules">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+</node>
+<node COLOR="#0033ff" CREATED="1701078714849" ID="ID_859827031" MODIFIED="1701078719004" POSITION="left" TEXT="Script like a dev">
+<edge STYLE="sharp_bezier" WIDTH="8"/>
+<font NAME="SansSerif" SIZE="18"/>
+<node COLOR="#00b439" CREATED="1701076765297" ID="ID_25431537" MODIFIED="1701078731409" TEXT="Terraform">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701077022253" ID="ID_1439176669" MODIFIED="1701078731409" TEXT="devcontainer">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701077063791" ID="ID_1706187812" MODIFIED="1701078731409" TEXT="testing">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+<node COLOR="#00b439" CREATED="1701077074782" ID="ID_1914831174" MODIFIED="1701080188211" TEXT="Ansible">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701077078503" ID="ID_1364962625" MODIFIED="1701080827455" TEXT="tooling">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+<node COLOR="#111111" CREATED="1701080828968" ID="ID_930967180" MODIFIED="1701080831037" TEXT="devcontainer"/>
+<node COLOR="#111111" CREATED="1701080831776" ID="ID_1143463437" MODIFIED="1701080835110" TEXT="bats"/>
+<node COLOR="#111111" CREATED="1701080836107" ID="ID_474302302" MODIFIED="1701080842029" TEXT="ansible-lint"/>
+<node COLOR="#111111" CREATED="1701080847865" ID="ID_1194914647" MODIFIED="1701080855331" TEXT="mock golden image"/>
+</node>
+<node COLOR="#990000" CREATED="1701080277019" ID="ID_1684557586" MODIFIED="1701080280545" TEXT="language">
+<font NAME="SansSerif" SIZE="14"/>
+<node COLOR="#111111" CREATED="1701080381911" ID="ID_120265462" MODIFIED="1701080389934" TEXT="everything is global"/>
+<node COLOR="#111111" CREATED="1701080390254" ID="ID_1123231753" MODIFIED="1701080456229" TEXT="indempotent commands"/>
+<node COLOR="#111111" CREATED="1701080300905" ID="ID_1050961444" MODIFIED="1701080312942" TEXT="JSON stdin autoparsing"/>
+<node COLOR="#111111" CREATED="1701080282560" ID="ID_1857995442" MODIFIED="1701080644033" TEXT="master jinja streams"/>
+<node COLOR="#111111" CREATED="1701080458658" ID="ID_1772486057" MODIFIED="1701080886054" TEXT="modules instead of jinja ?"/>
+<node COLOR="#111111" CREATED="1701080900312" ID="ID_1313921630" MODIFIED="1701080979651" TEXT="playbooks are code"/>
+<node COLOR="#111111" CREATED="1701088479307" ID="ID_138506286" MODIFIED="1701088490586" TEXT="argument_specs"/>
+</node>
+<node COLOR="#990000" CREATED="1701077081890" ID="ID_499665837" MODIFIED="1701078731413" TEXT="testing">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+<node COLOR="#111111" CREATED="1701080672253" ID="ID_1285581449" MODIFIED="1701080702456" TEXT="unit tests">
+<node COLOR="#111111" CREATED="1701080199770" ID="ID_1013055887" MODIFIED="1701080204829" TEXT="manual fixtures"/>
+<node COLOR="#111111" CREATED="1701080191614" ID="ID_1484427911" MODIFIED="1701080196276" TEXT="module assert"/>
+</node>
+<node COLOR="#111111" CREATED="1701080700657" ID="ID_2403122" MODIFIED="1701080710282" TEXT="integration tests">
+<node COLOR="#111111" CREATED="1701080713756" ID="ID_1741895627" MODIFIED="1701080716944" TEXT="molecule"/>
+</node>
+</node>
+</node>
+<node COLOR="#00b439" CREATED="1701077085455" ID="ID_301052852" MODIFIED="1701078731414" TEXT="Shell">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701077088764" ID="ID_861987262" MODIFIED="1701089575595" TEXT="tooling">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701089581334" ID="ID_1676529281" MODIFIED="1701089584149" TEXT="language">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701077092220" ID="ID_1296216963" MODIFIED="1701078731415" TEXT="testing">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701077094007" ID="ID_1968941242" MODIFIED="1701078731416" TEXT="CI">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+</node>
+<node COLOR="#0033ff" CREATED="1701079204483" ID="ID_756113993" MODIFIED="1701079207290" POSITION="left" TEXT="Kata">
+<edge STYLE="sharp_bezier" WIDTH="8"/>
+<font NAME="SansSerif" SIZE="18"/>
+<node COLOR="#00b439" CREATED="1701079212117" ID="ID_92066459" MODIFIED="1701079352456" TEXT="Ansible ">
+<edge STYLE="bezier" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="16"/>
+<node COLOR="#990000" CREATED="1701079611512" ID="ID_1545031484" MODIFIED="1701079644516" TEXT="refactorer un r&#xf4;le qui a des effets de bords">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+<node COLOR="#990000" CREATED="1701079672652" ID="ID_986346860" MODIFIED="1701079687283" TEXT="refactorer un role qui melange indempotence et orcherstration">
+<font NAME="SansSerif" SIZE="14"/>
+</node>
+</node>
+</node>
+</node>
+</map>
