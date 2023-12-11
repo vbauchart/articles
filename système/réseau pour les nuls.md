@@ -1,4 +1,4 @@
-# Comprendre le procole IP quand on est pas un administrateur réseau.
+# Comprendre le protocole IP quand on est pas un administrateur réseau.
 
 - [Comprendre le procole IP quand on est pas un administrateur réseau.](#comprendre-le-procole-ip-quand-on-est-pas-un-administrateur-réseau)
   - [Introduction](#introduction)
