@@ -1,6 +1,6 @@
 # Comprendre le protocole IP quand on est pas un administrateur réseau.
 
-- [Comprendre le procole IP quand on est pas un administrateur réseau.](#comprendre-le-procole-ip-quand-on-est-pas-un-administrateur-réseau)
+- [Comprendre le protocole IP quand on est pas un administrateur réseau.](#comprendre-le-protocole-ip-quand-on-est-pas-un-administrateur-réseau)
   - [Introduction](#introduction)
   - [Avertissements préliminaires](#avertissements-préliminaires)
   - [Description de notre système postal simplifié](#description-de-notre-système-postal-simplifié)
@@ -9,15 +9,15 @@
     - [Appliqués à un réseau IP](#appliqués-à-un-réseau-ip)
   - [Algorithme de centralisation](#algorithme-de-centralisation)
     - [Création des départements et des bureaux distributeurs](#création-des-départements-et-des-bureaux-distributeurs)
-    - [Appliqué à un réseau IP : les commutateurs](#appliqué-à-un-réseau-ip--les-commutateurs)
     - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
   - [Les nœuds du réseau](#les-nœuds-du-réseau)
     - [L'adresse IP](#ladresse-ip)
-    - [Le sous-réseau](#le-sous-réseau)
+    - [Une adresse IP décrit informations](#une-adresse-ip-décrit-informations)
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
     - [La notation CIDR](#la-notation-cidr)
+    - [Organisation en sous-réseaux](#organisation-en-sous-réseaux)
     - [Configuration des appareil](#configuration-des-appareil)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
@@ -130,11 +130,6 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite aux lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-### Appliqué à un réseau IP : les commutateurs
-
-Dans l'analogie avec un réseau IP, le mécanisme appelé le bureau distributeur est appelé un **commutateur** (ou **switch** en anglais).
-
-
 ### Algorithme d'acheminement du courrier : le routage
 
 Dans cette nouvelle version de notre système postal, nous allons maintenant considérer que les bureaux distributeurs vont pouvoir remettre du courrier aux bureaux distributeurs de leurs **départements limitrophes**, qui devront à leur tour transporter le courrier à un autre département limitrophe. Le courrier finira par arriver au bureau distributeur de destination en traversant chaque département de proche en proche.
@@ -243,7 +238,7 @@ Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque 
 
 Le protocole IP, qui signifie _Internet Protocol_ (que l'on pourrait traduire par _protocole inter-réseau_), est le protocole qui va permettre la remise d'un paquet de donnés à une adresse du réseau. Il existe aujourd'hui deux versions du protocoles IP : IPv4 et IPv6. Ces protocoles sont incompatibles entre eux, n'utilisent pas le même format d'adresse et qui ont des entêtes et un fonctionnement légèrement différent.
 
-- Une adresse IP dans IPv4 est constituée de 32 bits et peut donc décrire $2^{32}$ addresses, soit à peu près 4 milliards, ce qui paraissait suffisant lors de sa création. Cependant avec tous les nouveaux usages, ce chiffre a explosé, menaçant même Internet de pénurie d'adresses disponibles.
+- Une adresse IP dans IPv4 est constituée de 32 bits et peut donc décrire $2^{32}$ addresses, soit à peu près 4 milliards, ce qui paraissait suffisant lors de sa création. Cependant avec tous les nouveaux usages, le nombre d'appareils connectés a explosé, menaçant même Internet de pénurie d'adresses disponibles.
 
 - Une adresse IP dans IPv6 est constituée de 128 bits et peut donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions. Ce protocole a été créé pour résoudre les limites de IPv4, et au passage lui ajouter quelques fonctionnalités, notamment pour augmenter la sécurité.
 
@@ -262,12 +257,14 @@ Pour faciliter la lecture, on utilise des représentation décimales pour IPv4 e
 > **Pour des raisons de simplicité, nous continuerons les explication avec IPv4 uniquement**.
 > Les notions restent très similaires pour IPv6.
 
-### Le sous-réseau
+### Une adresse IP décrit informations
 
 Exactement comme pour les codes postaux qui contiennent un numéro de département et un identifiant de commune, une adresse IP contient 2 informations :
 
 - Le **sous-réseau** dans lequel se trouve l'appareil (équivalent du **département**)
 - L'**identifiant** de l'appareil au sein de ce réseau (équivalent de l'**identifiant de commune**)
+
+Comme pour le code postal, on peut choisir combien de chiffres allouer à chaque information!
 
 Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle : 
 
@@ -278,11 +275,29 @@ Si on met côte à côte un code postal et une adresse IP, on peut faire un para
 | Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `67`        |
 | Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `159.78`    |
 
-Seuls les appareils et les routeurs ont besoin de savoir comment découper l'adresse afin de router correctement les paquets. Les paquets eux-mêmes n'emportent pas cette information. La plupart du temps, cette information n'est pas très utile dans le quotidien du développeur qui a besoin uniquement de l'adresse complète de destination, mais qui ne s'intéresse pas à la structure du réseau.
+Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de bits. Les chiffres ne sont qu'une representation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
 
-Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+| Type                                  | Adresse complète                        | Sous réseau                            | Identifiant              |
+| ------------------------------------- | --------------------------------------- | -------------------------------------- | ------------------------ |
+| Adresse IP en bits                    | `11000001.0010  1011.00110111.01000011` | `11000001.0010 0000.00000000.00000000` | `1011.00110111.01000011` |
+| Adresse IP en representation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `11.55.67`               |
 
-De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas, c'est à dire à être vigilent qu'une adresse IP ne puisse pas appartenir à 2 réseaux différents.
+Heureusement, il existe un petit utilitaire indispensable nommé `ipcalc` qui nous evitera de faire ces calculs de tête et nous donnera toutes les informations nécéssaires sur une adresse IP. Il prend en paramètre une adresse IP au format CIDR ou netmask, que nous allons expliquer dans la section suivante.
+
+```
+$ ipcalc 193.43.55.67/12
+Address:   193.43.55.67         11000001.0010 1011.00110111.01000011
+Netmask:   255.240.0.0 = 12     11111111.1111 0000.00000000.00000000
+Wildcard:  0.15.255.255         00000000.0000 1111.11111111.11111111
+=>
+Network:   193.32.0.0/12        11000001.0010 0000.00000000.00000000
+HostMin:   193.32.0.1           11000001.0010 0000.00000000.00000001
+HostMax:   193.47.255.254       11000001.0010 1111.11111111.11111110
+Broadcast: 193.47.255.255       11000001.0010 1111.11111111.11111111
+Hosts/Net: 1048574               Class C
+```
+
+
 
 ### Le masque de sous-réseau
 
@@ -311,6 +326,32 @@ Reprenons le même exemple que précédemment mais avec la notation CIDR, le mas
 | Nombre d'appareil possibles | 254                 |
 
 > Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
+
+### Organisation en sous-réseaux
+
+
+Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, eux-mêmes divisables à
+
+Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+
+
+
+```mermaid
+flowchart TD
+  192.168.0.0/16 --> 192.168.0.0/24
+  192.168.0.0/16 --> 192.168.1.0/24
+  192.168.0.0/16 --> 192.168.3.0/24
+```
+
+De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas, c'est à dire à être vigilant qu'une même adresse IP ne puisse pas appartenir à 2 réseaux différents.
+
+Comme une adresse réseau est souvent le sous-réseau d'une autre adresse réseau, on utilise indifféremment les terme "réseau" et "sous-réseau" dans le langage courant.
+
+### Réseaux particuliers
+
+Lors de l'ouverture d'internet au monde, il a été décidé de reserver certains sous-réseaux à des usages particuliers.
+
+Ces [Adresses Spéciales](https://fr.wikipedia.org/wiki/Adresse_IP#Plages_d'adresses_IP_sp%C3%A9ciales) ont peu d’intérêt pour l'utilisateur, sauf certaines adresses que l'on appelle **adresses privées**. Les adresses privées sont prévues pour ne pas pouvoir circuler sur les routeurs d'Internet, ni pouvoir être résolu par les DNS racines. Ces adresses sont utilsés chaque fois
 
 ### Configuration des appareil
 
