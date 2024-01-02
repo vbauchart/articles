@@ -14,7 +14,7 @@
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
   - [Les nœuds du réseau](#les-nœuds-du-réseau)
     - [L'adresse IP](#ladresse-ip)
-    - [Une adresse IP décrit informations](#une-adresse-ip-décrit-informations)
+    - [Une adresse IP contient deux informations](#une-adresse-ip-contient-deux-informations)
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
     - [La notation CIDR](#la-notation-cidr)
     - [Organisation en sous-réseaux](#organisation-en-sous-réseaux)
@@ -257,7 +257,7 @@ Pour faciliter la lecture, on utilise des représentation décimales pour IPv4 e
 > **Pour des raisons de simplicité, nous continuerons les explication avec IPv4 uniquement**.
 > Les notions restent très similaires pour IPv6.
 
-### Une adresse IP décrit informations
+### Une adresse IP contient deux informations
 
 Exactement comme pour les codes postaux qui contiennent un numéro de département et un identifiant de commune, une adresse IP contient 2 informations :
 
@@ -266,7 +266,7 @@ Exactement comme pour les codes postaux qui contiennent un numéro de départeme
 
 Comme pour le code postal, on peut choisir combien de chiffres allouer à chaque information!
 
-Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle : 
+Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle :
 
 | Type                         | Adresse complète | Sous réseau   | Identifiant |
 | ---------------------------- | ---------------- | ------------- | ----------- |
@@ -275,16 +275,16 @@ Si on met côte à côte un code postal et une adresse IP, on peut faire un para
 | Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `67`        |
 | Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `159.78`    |
 
-Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de bits. Les chiffres ne sont qu'une representation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
+Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de bits. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
 
 | Type                                  | Adresse complète                        | Sous réseau                            | Identifiant              |
 | ------------------------------------- | --------------------------------------- | -------------------------------------- | ------------------------ |
 | Adresse IP en bits                    | `11000001.0010  1011.00110111.01000011` | `11000001.0010 0000.00000000.00000000` | `1011.00110111.01000011` |
-| Adresse IP en representation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `11.55.67`               |
+| Adresse IP en représentation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `11.55.67`               |
 
-Heureusement, il existe un petit utilitaire indispensable nommé `ipcalc` qui nous evitera de faire ces calculs de tête et nous donnera toutes les informations nécéssaires sur une adresse IP. Il prend en paramètre une adresse IP au format CIDR ou netmask, que nous allons expliquer dans la section suivante.
+Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format CIDR ou netmask, que nous allons expliquer dans la section suivante.
 
-```
+```bash
 $ ipcalc 193.43.55.67/12
 Address:   193.43.55.67         11000001.0010 1011.00110111.01000011
 Netmask:   255.240.0.0 = 12     11111111.1111 0000.00000000.00000000
@@ -296,8 +296,6 @@ HostMax:   193.47.255.254       11000001.0010 1111.11111111.11111110
 Broadcast: 193.47.255.255       11000001.0010 1111.11111111.11111111
 Hosts/Net: 1048574               Class C
 ```
-
-
 
 ### Le masque de sous-réseau
 
@@ -329,8 +327,7 @@ Reprenons le même exemple que précédemment mais avec la notation CIDR, le mas
 
 ### Organisation en sous-réseaux
 
-
-Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, eux-mêmes divisables à
+Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, qui eux-mêmes peuvent être divisés en sous-sous-réseaux, etc...
 
 Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
