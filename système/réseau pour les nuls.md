@@ -18,6 +18,7 @@
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
     - [La notation CIDR](#la-notation-cidr)
     - [Organisation en sous-réseaux](#organisation-en-sous-réseaux)
+    - [Adresses particulières](#adresses-particulières)
     - [Configuration des appareil](#configuration-des-appareil)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
@@ -331,8 +332,6 @@ Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres div
 
 Si la notion de sous-réseau est finalement peu utile pour le developpeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
-
-
 ```mermaid
 flowchart TD
   192.168.0.0/16 --> 192.168.0.0/24
@@ -357,43 +356,53 @@ De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas,
 
 Comme une adresse réseau est souvent le sous-réseau d'une autre adresse réseau, on utilise indifféremment les terme "réseau" et "sous-réseau" dans le langage courant.
 
-### Réseaux particuliers
+### Adresses particulières
 
-Lors de l'ouverture d'internet au monde, il a été décidé de reserver certains sous-réseaux à des usages particuliers.
+Lors de la définition d'un sous-réseau, il n'est pas possible d'utiliser la première et la dernière adresse du réseau:
 
-Ces [Adresses Spéciales](https://fr.wikipedia.org/wiki/Adresse_IP#Plages_d'adresses_IP_sp%C3%A9ciales) ont peu d’intérêt pour l'utilisateur, sauf certaines adresses que l'on appelle **adresses privées**. Les adresses privées sont prévues pour ne pas pouvoir circuler sur les routeurs d'Internet, ni pouvoir être résolu par les DNS racines. Ces adresses sont utilsés chaque fois
+- La première adresse est réservée pour désigner l'adresse du réseau lui-même. Exemple: ```192.168.1.0/24```
+- La dernière adresse est réservée pour l'adresse dite de _broadcast_, qui permet d'envoyer le même paquet à tous les appareils du réseau. Exemple: ```192.168.1.255/24```
+
+Lors de l'ouverture d'internet au monde, il a été également été décidé de réserver certaines adresses à des usages particuliers.
+
+Ces [Adresses Spéciales](https://fr.wikipedia.org/wiki/Adresse_IP#Plages_d'adresses_IP_sp%C3%A9ciales) ne sont pas toutes utiles mais certaines sont intéressantes à connaître.
+
+Les adresses spéciales les plus utilisés sont les **adresses privées**. Elles sont prévues pour ne pas pouvoir circuler sur les routeurs d'Internet, ni pouvoir être résolu par les DNS racines. Ces adresses sont utilisées lorsque l'on veut être sûr que ce machines ne seront pas joignable depuis Internet. Même si on peu théoriquement utiliser n'importe quelle adressage dans un réseau non connecté à Internet, c'est une bonne pratique d’utiliser ces adresses.
+
+> L'abus d'utilisation des adresses privées donne parfois lieu à des conflits inattendus. Par exemple certains VPN utilisent ces plages d'IP privées, qui peuvent être les mêmes que le réseau virtuel interne utilisé par Docker, engendrant des conflits d'IP et des grosses migraines aux développeurs !
 
 ### Configuration des appareil
 
-Pour communiquer sur le réseau, un nœud est le seul responsable de sa propre adresse sur le réseau.
+Pour communiquer sur le réseau, un appareil est le seul responsable de sa propre adresse sur le réseau.
 
-- Lorsqu'il enverra un datagramme, il ajoutera dans les meta-données sa propre adresse comme adresse de retour
-- Lorsque des datagrammes arrivent sur son sous-réseau, le nœud devra les réclamer au switch qui s'occupe de la distribution locale.
+- Lorsqu'il enverra des données, il ajoutera dans les meta-données sa propre adresse comme adresse de retour.
+- Lorsque des données sont reçues par un appareil, il ne les lira que si l'adresse de destination des meta-données correspondent à sa propre adresse. Si l'adresse de destination de correspond pas, les données seront simplement ignorées.
 
 > Selon l'analogie avec le système postal, chaque commune connaît son propre code postal
 
 Cela implique que l'administrateur système n'a pas le droit à l'erreur :
 
-- Si l'administrateur donne au nœud une adresse qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données
-- Si l'administrateur donne la même adresse à 2 appareil du même sous-réseau, les 2 appareil réclameront les mêmes données et il est probable que chacun de ces appareil ne reçoivent que des données tronquées
+- Si l'administrateur attribue une adresse à un appareil qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données.
+- Si l'administrateur donne la même adresse à 2 appareils du même réseau, les 2 appareil réclameront les mêmes données et il est probable que chacun de ces appareil ne reçoivent que des données tronquées.
 
 Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
 
-Attention, certains appareils possèdent plusieurs cartes réseaux, chaque carte est considérée comme un nœud du réseau indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
+Attention, dans le cas où un appareil possède plusieurs cartes réseaux, chaque carte est considérée comme un nœud indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
 
 ### Configuration des switchs
 
-Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les paquets à ceux qui les réclament grâce au **protocole ARP** (Address Resolution Protocol).
+Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les données aux appareil qui lui sont directement connecté. C'est grâce au **protocole ARP** (_Address Resolution Protocol_) qu'ils arrivent à connaître dynamiquement les appareils qui lui sont connecté.
 
-Fonctionnement de ARP :
+Fonctionnement simplifié de ARP :
 
-1. Le switch reçoit un paquet sur un de ces "ports" (carte réseau connecté à une autre carte réseau par un cable, à ne pas confondre avec la notion de "port" de `TCP` ou `UDP`) à destination d'une adresse IP
-2. Le switch envoie un message spécial à **tous** ces ports actifs pour demander à qui appartient l'adresse IP de destination
-3. Le nœud qui possède cette adresse répond à la demande en se désignant lui-même (le nœud peut être un routeur si l'adresse appartient à un autre sous-réseau)
-4. Le switch envoie le paquet sur le câble de celui qui a répondu
-5. Pendant un laps de temps défini, il va garder en mémoire cette association pour ne pas redemander trop souvent (on parle de **cache ARP**)
+1. Le switch reçoit des données à destination d'une adresse ```X.X.X.X```
+2. Le switch envoie un message spécial à **tous** les appareils lui sont directement connecté avec la question "à qui appartient cette adresse ```X.X.X.X``` ?"
+3. L'appareil qui est configuré avec cette adresse va répondre au switch
+4. Le switch envoie les données sur le câble de celui qui a répondu
+5. Pendant un certains laps de temps, le switch va garder en mémoire cette association pour ne pas redemander trop souvent (on parle de **cache ARP**)
+6. Si aucun appareil ne répond, il peut être configuré pour envoyer les données vers une adresse par défaut (_default gateway_), qui est généralement un routeur qui saura peut-être les transférer vers un autre sous-réseau.
 
-En réalité, les switchs modernes ont des configurations qui peuvent être plus complexes, comme par exemple la possibilité de créer des sous-réseaux virtuels étalés entre plusieurs switchs : les VLAN (Virtual Local Area Network)
+En réalité, les switchs modernes ont des configurations qui peuvent être plus complexes, comme par exemple la possibilité de créer des switchs virtuels étalés entre plusieurs switchs : les VLAN (Virtual Local Area Network)
 
 > Selon l'analogie avec le système postal, les switchs sont les bureaux de distribution locaux, ils récupèrent les courriers des communes ou distribuent le courrier aux communes
 
