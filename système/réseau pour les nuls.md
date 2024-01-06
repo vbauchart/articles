@@ -11,15 +11,16 @@
     - [Création des départements et des bureaux distributeurs](#création-des-départements-et-des-bureaux-distributeurs)
     - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
-  - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
-  - [Les nœuds du réseau](#les-nœuds-du-réseau)
-    - [Les paquets](#les-paquets)
-    - [L'adresse IP](#ladresse-ip)
+  - [L'adresse IP (Internet Protocol)](#ladresse-ip-internet-protocol)
+    - [Les paquets IP](#les-paquets-ip)
+    - [Le format de l'adresse IP](#le-format-de-ladresse-ip)
     - [Une adresse IP contient deux informations](#une-adresse-ip-contient-deux-informations)
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
     - [La notation CIDR](#la-notation-cidr)
     - [Organisation en sous-réseaux](#organisation-en-sous-réseaux)
     - [Adresses particulières](#adresses-particulières)
+  - [Switchs et routeurs](#switchs-et-routeurs)
+    - [Les nœuds périphériques du réseau](#les-nœuds-périphériques-du-réseau)
     - [Configuration des appareils](#configuration-des-appareils)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
@@ -224,25 +225,17 @@ Pour adapter ces nouveaux identifiants aux systèmes de **commutation** et de **
 
 > Dans l'analogie avec un réseau IP, le nombre de digit identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
 
-## Application des notions précédentes aux réseaux IP (Internet Protocol)
+## L'adresse IP (Internet Protocol)
 
-## Les nœuds du réseau
+### Les paquets IP
 
-Tous les appareils ayant une ou plusieurs cartes réseaux sont appelés des **nœuds du réseau**. Ils possèdent une adresse IP pour communiquer entre eux. Les ordinateurs, les smartphones, les serveurs , et même les routeurs, sont tous des nœuds de notre réseau.
+Quand un appareil doit transférer des données à un autre appareil sur le réseau, la donnée sera d'abord découpée en petit morceaux appelés **paquets** (on parle aussi de **datagramme**). Chaque paquet aura des meta-données, aussi appelées **entête** du paquet.
 
-Les développeurs vont plus naturellement travailler sur les nœuds **périphériques** du réseau, autrement dit les nœuds portant l'application, soit un client ou un serveur.
+Il faut donc imaginer les données comme des myriades de petits paquets qui ont chacun leur vie propre sur le réseau, puis qui seront reconstitué par l'appareil de destination.
 
-Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les nœuds périphériques. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
+Le protocole IP sera responsable d'acheminer les paquets unitairement et n'a pas la vision de la donnée complète. Chaque paquet est donc traité comme une donnée autonome sans contexte. Pour reconstituer la donnée complète, il faudra ajouter au protocole IP, un protocole de plus haut niveau comme `TCP` ou `UDP` par exemple.
 
-### Les paquets
-
-Quand un appareil doit transférer des données à un autre appareil sur le réseau, la donnée sera d'abord découpée en petit morceaux appelés **paquets**. Chaque paquet aura des meta-données, aussi appelées **entête** du paquet.
-
-Il faut donc imaginer les données comme des myriades de paquets qui ont une vie propre sur le réseau, puis qui seront reconstitué par l'appareil de destination.
-
-Le protocole IP ne sera responsable que d'acheminer les paquets unitairement et n'a pas la vision de la donnée originale. Chaque paquet est donc traité comme une donnée autonome sans contexte.
-
-### L'adresse IP
+### Le format de l'adresse IP
 
 Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez nombreuses pour qu'Internet puisse fonctionner.
 
@@ -256,7 +249,7 @@ Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais
 
 En attendant l'adoption complète de IPv6 pour tout Internet, il existe beaucoup de techniques qui permettent de **contourner les limites actuelles de IPv4**. La technique la plus répandue étant simplement de ne pas connecter des sous-réseaux entiers à Internet. Ces réseaux **privés** peuvent utiliser toute la puissance d'IP tout en s'affranchissant de ses limites tant que les paquets ne sortent pas du réseau. En contrepartie, il faudra user de techniques complexes et/ou limitées pour pouvoir communiquer avec le reste d'Internet (`Proxy`, `NAT`, etc...)
 
-Pour faciliter la lecture, on utilise des représentation décimales pour IPv4 et hexadécimale pour les adresses IPv6.
+Pour faciliter la lecture, on utilise une représentation décimales pour IPv4 et hexadécimale pour les adresses IPv6.
 
 | Type         | Exemple                                   |
 | ------------ | ----------------------------------------- |
@@ -278,21 +271,21 @@ Comme pour le code postal, on peut choisir combien de chiffres allouer à chaque
 
 Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle :
 
-| Type                         | Adresse complète | Sous réseau   | Identifiant |
-| ---------------------------- | ---------------- | ------------- | ----------- |
-| Code postal                  | `33160`          | `33000`       | `160`       |
-| Code postal d'Outre-mer      | `97114​`         | `97100`       | `14​`       |
-| Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `67`        |
-| Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `159.78`    |
+| Type                         | Adresse complète | Sous réseau   | Identifiant  |
+| ---------------------------- | ---------------- | ------------- | ------------ |
+| Code postal                  | `33160`          | `33000`       | `00160`      |
+| Code postal d'Outre-mer      | `97114​`         | `97100`       | `00014​`     |
+| Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `0.0.0.67`   |
+| Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `0.0.159.78` |
 
 Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de bits. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
 
-| Type                                  | Adresse complète                        | Sous réseau                            | Identifiant              |
-| ------------------------------------- | --------------------------------------- | -------------------------------------- | ------------------------ |
-| Adresse IP en bits                    | `11000001.0010  1011.00110111.01000011` | `11000001.0010 0000.00000000.00000000` | `1011.00110111.01000011` |
-| Adresse IP en représentation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `11.55.67`               |
+| Type                                  | Adresse complète                        | Sous réseau                            | Identifiant                                     |
+| ------------------------------------- | --------------------------------------- | -------------------------------------- | ----------------------------------------------- |
+| Adresse IP en bits                    | `11000001.0010  1011.00110111.01000011` | `11000001.0010 0000.00000000.00000000` | `00000000.00000000.0000 1011.00110111.01000011` |
+| Adresse IP en représentation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `0.11.55.67`                                    |
 
-Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format CIDR ou netmask, que nous allons expliquer dans la section suivante.
+Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format `CIDR`, que nous allons expliquer dans la section suivante.
 
 ```bash
 $ ipcalc 193.43.55.67/12
@@ -311,15 +304,15 @@ Hosts/Net: 1048574               Class C
 
 Pendant longtemps, pour retrouver l'adresse du réseau, on associait l'**adresse IP** avec un **masque binaire**, par exemple :
 
-|                       | Représentation décimale | Représentation binaire                |
-| --------------------- | ----------------------- | ------------------------------------- |
-| Adresse du nœud       | `193.43.55.67`          | `11000001 00101011 00110111 01000011` |
-| Masque de sous-réseau | `255.255.255.0`         | `11111111 11111111 11111111 00000000` |
-| Adresse du réseau     | `193.43.55.0`           | `11000001 00101011 00110111 00000000` |
+|                           | Représentation décimale | Représentation binaire                |
+| ------------------------- | ----------------------- | ------------------------------------- |
+| Adresse du nœud           | `193.43.55.67`          | `11000001 00101011 00110111 01000011` |
+| Masque de sous-réseau     | `255.255.255.0`         | `11111111 11111111 11111111 00000000` |
+| Résultat du `AND` binaire | `193.43.55.0`           | `11000001 00101011 00110111 00000000` |
 
 Dans cet notation, le **masque** permet de retrouver l'adresse du réseau en appliquant un `AND` binaire
 
-A défaut d'être simple, cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire.
+Cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire. Mais il existe une représentation plus simple et plus concise : la notation **CIDR**.
 
 ### La notation CIDR
 
@@ -380,6 +373,16 @@ Les adresses spéciales les plus utilisés sont les **adresses privées**. Elles
 
 > L'abus d'utilisation des adresses privées donne parfois lieu à des conflits inattendus. Par exemple certains VPN utilisent ces plages d'IP privées, qui peuvent être les mêmes que le réseau virtuel interne utilisé par Docker, engendrant des conflits d'IP et des grosses migraines aux développeurs !
 
+## Switchs et routeurs
+
+### Les nœuds périphériques du réseau
+
+Tous les appareils ayant une ou plusieurs cartes réseaux sont appelés des **nœuds du réseau**. Ils possèdent une adresse IP pour communiquer entre eux. Les ordinateurs, les smartphones, les serveurs , et même les routeurs, sont tous des nœuds de notre réseau.
+
+Les développeurs vont plus naturellement travailler sur les nœuds **périphériques** du réseau, autrement dit les nœuds portant l'application, qui sera un client ou un serveur.
+
+Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les nœuds périphériques. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
+
 ### Configuration des appareils
 
 Pour communiquer sur le réseau, un appareil est le seul responsable de sa propre adresse sur le réseau.
@@ -400,7 +403,7 @@ Attention, dans le cas où un appareil possède plusieurs cartes réseaux, chaqu
 
 ### Configuration des switchs
 
-Les switchs (ou **commutateurs**) n'ont par défaut aucune configuration. Ils se contente de distribuer localement les données aux appareil qui lui sont directement connecté. C'est grâce au **protocole ARP** (_Address Resolution Protocol_) qu'ils arrivent à connaître dynamiquement les appareils qui lui sont connecté.
+Un switch (ou **commutateur**) n'a pas besoin de configuration. Il se contente de distribuer localement les données aux appareil qui lui sont directement connecté. C'est grâce au **protocole ARP** (_Address Resolution Protocol_) qu'un switch va connaître dynamiquement les appareils qui lui sont connecté.
 
 Fonctionnement simplifié de ARP :
 
