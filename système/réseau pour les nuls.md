@@ -329,15 +329,28 @@ Reprenons le même exemple que précédemment mais avec la notation CIDR, le mas
 
 Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, qui eux-mêmes peuvent être divisés en sous-sous-réseaux, etc...
 
-Elle est en revanche cruciale pour l'architecte réseau. En effet, dans le Cloud ou encore plus sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+Si la notion de sous-réseau est finalement peu utile pour le developpeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
 
 
 ```mermaid
 flowchart TD
   192.168.0.0/16 --> 192.168.0.0/24
-  192.168.0.0/16 --> 192.168.1.0/24
+  192.168.0.0/16 --> D(192.168.1.0/24)
+  D --> DD((254 hosts))
   192.168.0.0/16 --> 192.168.3.0/24
+
+  192.168.0.0/24 --> A(192.168.0.0/26)
+  A --> AA((62 hosts))
+  192.168.0.0/24 --> B(192.168.0.64/26)
+  B --> BB((62 hosts))
+
+  192.168.3.0/24 --> E(192.168.3.0/28)
+  E --> EE((14 hosts))
+  192.168.3.0/24 --> F(192.168.3.16/28)
+  F --> FF((14 hosts))
+  192.168.3.0/24 --> G(192.168.3.32/28)
+  G --> GG((14 hosts))
 ```
 
 De même il faut faire attention à ce que les réseaux ne se "chevauchent" pas, c'est à dire à être vigilant qu'une même adresse IP ne puisse pas appartenir à 2 réseaux différents.
