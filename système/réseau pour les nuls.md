@@ -13,13 +13,14 @@
     - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
   - [Application des notions précédentes aux réseaux IP (Internet Protocol)](#application-des-notions-précédentes-aux-réseaux-ip-internet-protocol)
   - [Les nœuds du réseau](#les-nœuds-du-réseau)
+    - [Les paquets](#les-paquets)
     - [L'adresse IP](#ladresse-ip)
     - [Une adresse IP contient deux informations](#une-adresse-ip-contient-deux-informations)
     - [Le masque de sous-réseau](#le-masque-de-sous-réseau)
     - [La notation CIDR](#la-notation-cidr)
     - [Organisation en sous-réseaux](#organisation-en-sous-réseaux)
     - [Adresses particulières](#adresses-particulières)
-    - [Configuration des appareil](#configuration-des-appareil)
+    - [Configuration des appareils](#configuration-des-appareils)
     - [Configuration des switchs](#configuration-des-switchs)
     - [Configuration des routeurs](#configuration-des-routeurs)
     - [Les paquets spéciaux ICMP](#les-paquets-spéciaux-icmp)
@@ -233,6 +234,14 @@ Les développeurs vont plus naturellement travailler sur les nœuds **périphér
 
 Pour la suite, nous utiliserons le terme générique d'**appareil** (_device_ en anglais) pour désigner les nœuds périphériques. Dans notre système postal, ces appareils sont donc les communes ayant un code postal.
 
+### Les paquets
+
+Quand un appareil doit transférer des données à un autre appareil sur le réseau, la donnée sera d'abord découpée en petit morceaux appelés **paquets**. Chaque paquet aura des meta-données, aussi appelées **entête** du paquet.
+
+Il faut donc imaginer les données comme des myriades de paquets qui ont une vie propre sur le réseau, puis qui seront reconstitué par l'appareil de destination.
+
+Le protocole IP ne sera responsable que d'acheminer les paquets unitairement et n'a pas la vision de la donnée originale. Chaque paquet est donc traité comme une donnée autonome sans contexte.
+
 ### L'adresse IP
 
 Il peut y avoir une très grande quantité d'appareils sur le réseau et chaque appareil doit avoir une adresse unique, il faut donc que les adresses soit assez nombreuses pour qu'Internet puisse fonctionner.
@@ -371,7 +380,7 @@ Les adresses spéciales les plus utilisés sont les **adresses privées**. Elles
 
 > L'abus d'utilisation des adresses privées donne parfois lieu à des conflits inattendus. Par exemple certains VPN utilisent ces plages d'IP privées, qui peuvent être les mêmes que le réseau virtuel interne utilisé par Docker, engendrant des conflits d'IP et des grosses migraines aux développeurs !
 
-### Configuration des appareil
+### Configuration des appareils
 
 Pour communiquer sur le réseau, un appareil est le seul responsable de sa propre adresse sur le réseau.
 
@@ -408,15 +417,17 @@ En réalité, les switchs modernes ont des configurations qui peuvent être plus
 
 ### Configuration des routeurs
 
-Un routeur ne connaît en premier que les adresses des sous-réseaux qui lui sont directement connectés par ses câbles. Lorsqu'un routeur reçoit un paquet, il doit donc prendre une décision :
+Contrairement à un switch, un routeur dispose d'une adresse IP et d'une configuration décrivant le réseau qui l'entoure. Grâce à cette configuration, il va pouvoir échanger avec les autres routeurs qui lui sont connecté.
 
-- Si l'adresse contient un sous-réseau qui lui est directement connecté, il recopie directement le paquet vers le réseau de destination.
-- Si l'adresse n'est pas sur un de ses sous-réseaux, il consulte sa table de routage pour déterminer le prochain routeur le plus proche de sa destination.
-- Si l'adresse n'est dans aucun des réseaux connus ni dans sa table de routage, il peut décider de l'envoyer vers une _route par defaut_ (_Default Gateway_). Mais peut également être aussi configuré pour refuser de transmettre le paquet plus loin. Dans ce cas, le paquet est considéré comme perdu.
+Lorsqu'un routeur reçoit des données à destination d'une adresse IP, il doit prendre une décision :
+
+- Si l'adresse IP appartient à un réseau configuré, il transfère les données vers ce réseau. Cela peut être un autre routeur ou un switch qui s'occupera alors de la distribution locale.
+- Si l'adresse n'est pas connu, il consulte sa table de routage pour déterminer le prochain routeur le plus proche de sa destination.
+- Si l'adresse n'est dans aucun des réseaux connus ni dans sa table de routage, il peut décider de l'envoyer vers une _route par défaut_ (_Default Gateway_). Mais peut également être aussi configuré pour refuser de transmettre le paquet plus loin. Dans ce cas, la donnée est considéré comme perdu.
 
 Les tables de routage de chaque routeur peuvent être configurées manuellement sur des petits réseaux, mais plus généralement on utilisera des protocoles de construction dynamique des tables de routage, comme `BGP` ou `OSPF`.
 
-Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner d'information de leur propre configuration. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
+Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner d'information de leurs propres configurations. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
 
 > Les table de routages correspondent aux tableaux de redirections dans l'analogie avec le système postal. Ils font le travail des bureaux de distribution lors du transfert de courrier vers un département limitrophe.
 
@@ -424,19 +435,19 @@ Ces protocoles sont algorithmiquement complexes, car tous les routeurs du résea
 
 En plus des paquets de données circulant sur le réseau, il existe des paquets spéciaux ne contenant pas de données à acheminer, mais qui contiennent à la place une information d'état envoyé par les routeurs pour signaler un événement ou répondre à une demande d'état. Ce sont les paquet **ICMP** (_Internet Control Message Protocol_).
 
-Le plus connu est le paquet ICMP de type `echo` : Lorsqu'un nœud du réseau reçoit ce paquet, il se contente de le renvoyer à l'émetteur. C'est le paquet envoyé par la commande bien connue `ping`. Mais c'est probablement le type de paquet ICMP le moins utile en réalité. Il est d'ailleurs souvent bloqué par les firewall, car une commande `echo` peut donner de l'information à un potentiel attaquant, par exemple pour scanner le réseau à la recherche des machines allumées.
+Le plus connu est le paquet ICMP de type `echo` : Lorsqu'un appareil ou un routeur du réseau reçoit ce paquet, il se contente de le renvoyer à l'émetteur. C'est le paquet envoyé par la commande bien connue `ping`. Mais c'est probablement le type de paquet ICMP le moins utile en réalité. Il est d'ailleurs souvent bloqué par les firewall, car une commande `echo` peut donner de l'information à un potentiel attaquant, par exemple pour scanner le réseau à la recherche des appareils connectés.
 
-En revanche les type de paquet ICMP les plus utiles sont les messages indiquant à l'émetteur qu'une erreur s'est produite pendant l'acheminement d'un paquet de donnée.
+En revanche, les type de paquet ICMP les plus utiles sont les messages indiquant à l'émetteur qu'une erreur s'est produite pendant l'acheminement d'un paquet de donnée.
 
-Par exemple lorsqu'un paquet arrive sur un routeur et qu'il n'arrive pas à prendre de décision de routage, il supprimera le paquet de sa mémoire, et informera l’expéditeur grâce à un paquet ICMP de type _Destination Unreachable_. Ainsi l'expediteur sera au courant du problème et pourra prendre des mesures.
+Par exemple lorsqu'un paquet arrive sur un routeur et qu'il n'arrive pas à prendre de décision de routage, il supprimera le paquet de sa mémoire, et informera l’expéditeur grâce à un paquet ICMP de type _Destination Unreachable_. Ainsi l’expéditeur sera au courant du problème et pourra prendre des mesures.
 
 ### Le _Time To Live_
 
-Comme il n'existe pas d'autorité centrale sur le réseau, personne ne sait où se trouve un paquet une fois qu'il est envoyé sur le réseau. Du point de vue des routeurs, chaque paquet est indépendant et il ne garde aucune trace de son passage une fois envoyé au routeur suivant.
+Comme il n'existe pas d'autorité centrale sur le réseau, personne ne sait où se trouve une donnée une fois qu'elle est envoyée sur le réseau. Les routeurs et les switchs n'ont pas besoin de garder en mémoire la trace des données qu'ils traitent.
 
-Que se passerait-il si par exemple des routeurs mal configurés créaient par erreur un routage excessivement long, ou pire un routage en boucle qui n'arriverait jamais à la destination ?
+Mais se passerait-il si un routeur mal configuré transférait les données au mauvais routeur ? Comme il n'y a pas d'autorité centrale pour vérifier le fonctionnement global du réseau, des données peuvent prendre des chemins inutilement long, ou pire, circuler en boucle entre des routeurs sans jamais arriver à destination !
 
-Pour palier ce problème de confiance, chaque paquet produit par l'émetteur possède dans son entête un nombre entier, nommé **Time To Live** (**Temps restant à vivre**), abrégé `TTL`. A chaque fois qu'un paquet est lu par un routeur et recopier vers un autre réseau, ce nombre est décrémenté de 1. Un routeur qui doit envoyer un paquet avec un `TTL` de 0 le considérera comme perdu et informera l'expéditeur par un paquet ICMP de type _Time Exceeded_
+Pour palier ce problème de confiance, chaque paquet produit possède dans son entête un nombre entier, nommé **Time To Live** (**Temps restant à vivre**), abrégé `TTL`. A chaque fois qu'un paquet est lu par un routeur et recopier vers un autre réseau, ce nombre est décrémenté de 1. Un routeur qui doit envoyer un paquet avec un `TTL` de 0 le considérera comme perdu et informera l'expéditeur par un paquet ICMP de type _Time Exceeded_
 
 On notera que ici aussi, il est possible de détourner cette noton de `TTL` afin d'obtenir des informations sur les routeurs qu'un paquet traverse jusqu'à sa destination. Par exemple, si je veux connaître l'adresse IP du troisième routeur traversé par mes paquets, je peux forcer le `TTL` à 3. Le troisième routeur traversé verra le `TTL` à 0 et renverra un paquet ICMP avec son adresse dans le champ `source`. C'est exactement le fonctionnement de la commande `traceroute` qui envoie successivement des paquets avec un `TTL` de 1, puis 2, puis 3, etc... Là encore il est facile de bloquer ces types de paquets si l'on considère que c'est une faille de sécurité.
 
