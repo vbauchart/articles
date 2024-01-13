@@ -2,15 +2,11 @@
 
 - [Comprendre le protocole IP quand on est pas un administrateur réseau.](#comprendre-le-protocole-ip-quand-on-est-pas-un-administrateur-réseau)
   - [Introduction](#introduction)
-  - [Avertissements préliminaires](#avertissements-préliminaires)
-  - [Description de notre système postal simplifié](#description-de-notre-système-postal-simplifié)
-  - [ALgorithme primitif](#algorithme-primitif)
+  - [Description d'un système postal simplifié](#description-dun-système-postal-simplifié)
     - [Remise de courrier simple](#remise-de-courrier-simple)
-    - [Appliqués à un réseau IP](#appliqués-à-un-réseau-ip)
-  - [Algorithme de centralisation](#algorithme-de-centralisation)
-    - [Création des départements et des bureaux distributeurs](#création-des-départements-et-des-bureaux-distributeurs)
-    - [Algorithme d'acheminement du courrier : le routage](#algorithme-dacheminement-du-courrier--le-routage)
-    - [Le cas spécial des départements d'outre-mer : les sous-réseaux](#le-cas-spécial-des-départements-doutre-mer--les-sous-réseaux)
+  - [Centralisation par départements](#centralisation-par-départements)
+    - [Acheminement du courrier de proche en proche](#acheminement-du-courrier-de-proche-en-proche)
+    - [Le cas spécial des départements d'outre-mer](#le-cas-spécial-des-départements-doutre-mer)
   - [L'adresse IP (Internet Protocol)](#ladresse-ip-internet-protocol)
     - [Les paquets IP](#les-paquets-ip)
     - [Le format de l'adresse IP](#le-format-de-ladresse-ip)
@@ -44,13 +40,11 @@ Dans cet article, nous allons donc essayer de répondre simplement à des questi
 - _Ma box internet, c'est un switch ou un routeur?_
 - _J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par defaut" !!!_
 
-## Avertissements préliminaires
+## Description d'un système postal simplifié
 
-Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
+> Avertissement : Le système postal que nous allons décrire ici est imaginé à des fins **pédagogiques**. Bien que ressemblant au vrai système postal, il est totalement **fictif**. Si le sujet vous intéresse, je vous invite à consulter la page Wikipedia <https://fr.wikipedia.org/wiki/Code_postal_en_France>.
 
-J'imagine également que certaines de mes analogies vont faire sauter au plafond les puristes des couches OSI et autres administrateurs réseau, mais souvenez-vous que pour vulgariser, on est bien obliger d'éluder certaines vérités trop complexes !
-
-## Description de notre système postal simplifié
+> J'imagine également que certaines de mes analogies vont faire sauter au plafond les puristes des couches OSI et autres administrateurs réseau, mais souvenez-vous que pour vulgariser, on est bien obliger d'éluder certaines vérités trop complexes !
 
 Pour comprendre la remise d'un paquet d'un ordinateur à un autre, nous pouvons le comparer à la remise d'un courrier par le service postal.
 
@@ -74,8 +68,6 @@ Exemple de courrier à envoyer :
 | Expéditeur   | Saint-Médard-en-Jalles | 33160       |
 | Destinataire | Démuin                 | 80110       |
 
-## ALgorithme primitif
-
 ### Remise de courrier simple
 
 Voici donc notre premier algorithme sans aucune contrainte :
@@ -89,13 +81,7 @@ Voici le trajet qui sera effectué par notre courrier :
 
 Cet algorithme n'est pas optimal, car il faut effectuer **autant de trajet qu'il y a de courriers à remettre**.
 
-### Appliqués à un réseau IP
-
-Dans le cadre de l'analogie un réseau câblé, cela signifierait qu'il faut connecter des câbles réseaux entre tous les équipements du réseau. On voit bien que ce n'est pas tenable, et tous les mécanismes que nous allons décrire dans la suite vont permettre d'optimiser cette remise de paquet.
-
-## Algorithme de centralisation
-
-### Création des départements et des bureaux distributeurs
+## Centralisation par départements
 
 Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leur destination, et pouvoir ainsi grouper les courriers que l'on doit emmener même bureau distributeur de destination.
 
@@ -133,7 +119,9 @@ Si on regarde l'algorithme du point de vue des codes postaux :
 3. Lors du tri du courrier, on extrait le département destinataire et on calcule le code postal du département `80` à partir du code postal du destinataire `80110`, et en fait transiter le courrier jusqu'à la boite aux lettres `80` + `000` = `80000`
 4. Le courrier est ensuite acheminé de la boite `80000` vers la boite destinataire `80110`
 
-### Algorithme d'acheminement du courrier : le routage
+> Dans l'analogie avec un réseau IP, un bureau distributeur est ce qu'on appellera un **commutateur** (ou _switch_).
+
+### Acheminement du courrier de proche en proche
 
 Dans cette nouvelle version de notre système postal, nous allons maintenant considérer que les bureaux distributeurs vont pouvoir remettre du courrier aux bureaux distributeurs de leurs **départements limitrophes**, qui devront à leur tour transporter le courrier à un autre département limitrophe. Le courrier finira par arriver au bureau distributeur de destination en traversant chaque département de proche en proche.
 
@@ -177,9 +165,6 @@ Avec cet algorithme de redirection de proche en proche :
 
 ![Alt text](images/saint-medart-demuin-routage-tableau.jpg)
 
-> Dans l'analogie avec un réseau IP, celui qui redirige le courrier au département suivant est appelé un **routeur** (ou **router** en anglais).
-> Dans notre analogie, les bureaux distributeurs font office à la fois de **commutateurs** et de **routeurs** mais dans les réseaux IP, ce sont des appareils différents comme nous le verrons dans le chapitre suivant.
-
 Ce système de routage a beaucoup d'avantages :
 
 - Une fois le tableau de redirection calculé, il n'y a pas besoin d'autorité centrale pour prendre les décisions d'itinéraire. Le système est ainsi extrêmement résiliant.
@@ -187,7 +172,10 @@ Ce système de routage a beaucoup d'avantages :
 - L'enveloppe de courrier n'a pas besoin d'être modifiée pendant son parcours.
 - Le système peut choisir plusieurs routes possibles pour une même destination, et il peut aussi s'adapter à l'ajout et la suppression de département intermédiaires.
 
-### Le cas spécial des départements d'outre-mer : les sous-réseaux
+> Dans l'analogie avec un réseau IP, celui qui redirige le courrier au département suivant est appelé un **routeur** (ou **router** en anglais).
+> Dans notre analogie, les bureaux distributeurs font office à la fois de **commutateurs** et de **routeurs** mais dans les réseaux IP, ce sont des appareils différents comme nous le verrons dans le chapitre suivant.
+
+### Le cas spécial des départements d'outre-mer
 
 Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numéros de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
 
@@ -203,7 +191,7 @@ Il a donc été trouvé une solution plus simple qui résolvait tous ces problè
 | Trois-Rivières         | `97114​`    | `971`       | `14`    |
 | Saint-Paul             | `97460​`    | `974`       | `60`    |
 
-Pour adapter ces nouveaux identifiants aux systèmes de **commutation** et de **routage** existant, c'est assez simple :
+Pour adapter ces nouveaux identifiants au système existant, c'est assez simple :
 
 - Au niveau de chaque commune, on doit stocker un nouveau paramètre qui permet de calculer le centre distributeur du département.
 
@@ -233,7 +221,7 @@ Quand un appareil doit transférer des données à un autre appareil sur le rés
 
 Il faut donc imaginer les données comme des myriades de petits paquets qui ont chacun leur vie propre sur le réseau, puis qui seront reconstitué par l'appareil de destination.
 
-Le protocole IP sera responsable d'acheminer les paquets unitairement et n'a pas la vision de la donnée complète. Chaque paquet est donc traité comme une donnée autonome sans contexte. Pour reconstituer la donnée complète, il faudra ajouter au protocole IP, un protocole de plus haut niveau comme `TCP` ou `UDP` par exemple.
+Le protocole IP sera responsable d'acheminer les paquets unitairement et n'a pas la vision de la donnée complète. Chaque paquet est donc traité comme une donnée autonome sans contexte. Pour reconstituer la donnée complète, il faudra ajouter par dessus un protocole de plus haut niveau comme `TCP` ou `UDP` par exemple.
 
 ### Le format de l'adresse IP
 
@@ -245,7 +233,7 @@ Le protocole IP, qui signifie _Internet Protocol_ (que l'on pourrait traduire pa
 
 - Une adresse IP dans IPv6 est constituée de 128 bits et peut donc décrire $2^{128}$ addresses, soit à peu près 340 sextillions. Ce protocole a été créé pour résoudre les limites de IPv4, et au passage lui ajouter quelques fonctionnalités, notamment pour augmenter la sécurité.
 
-Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais la migration est difficile car tout le matériel (routeurs, switchs, ...) doit être remplacé. De plus, ces deux protocoles ne sont pas compatibles entre eux, et la migration nécessite de mettre au point des **stratégies de cohabitation** qui ne sont pas toujours simples.
+Plus complet (et plus complexe !), IPv6 est sensé remplacer IPv4 à terme, mais la migration est difficile car tout le matériel existant (routeurs, switchs, ...) doit être remplacé. De plus, ces deux protocoles ne sont pas compatibles entre eux, et la migration nécessite de mettre au point des **stratégies de cohabitation** qui ne sont pas toujours simples.
 
 En attendant l'adoption complète de IPv6 pour tout Internet, il existe beaucoup de techniques qui permettent de **contourner les limites actuelles de IPv4**. La technique la plus répandue étant simplement de ne pas connecter des sous-réseaux entiers à Internet. Ces réseaux **privés** peuvent utiliser toute la puissance d'IP tout en s'affranchissant de ses limites tant que les paquets ne sortent pas du réseau. En contrepartie, il faudra user de techniques complexes et/ou limitées pour pouvoir communiquer avec le reste d'Internet (`Proxy`, `NAT`, etc...)
 
@@ -267,7 +255,7 @@ Exactement comme pour les codes postaux qui contiennent un numéro de départeme
 - Le **sous-réseau** dans lequel se trouve l'appareil (équivalent du **département**)
 - L'**identifiant** de l'appareil au sein de ce réseau (équivalent de l'**identifiant de commune**)
 
-Comme pour le code postal, on peut choisir combien de chiffres allouer à chaque information!
+Comme pour le code postal, on peut choisir combien de chiffres allouer à chaque information.
 
 Si on met côte à côte un code postal et une adresse IP, on peut faire un parallèle :
 
@@ -332,7 +320,7 @@ Reprenons le même exemple que précédemment mais avec la notation CIDR, le mas
 
 Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, qui eux-mêmes peuvent être divisés en sous-sous-réseaux, etc...
 
-Si la notion de sous-réseau est finalement peu utile pour le developpeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+Si la notion de sous-réseau est finalement peu utile pour le développeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
 ```mermaid
 flowchart TD
