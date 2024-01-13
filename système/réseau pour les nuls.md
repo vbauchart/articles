@@ -4,7 +4,7 @@
   - [Introduction](#introduction)
   - [Description d'un système postal simplifié](#description-dun-système-postal-simplifié)
     - [Remise de courrier simple](#remise-de-courrier-simple)
-  - [Centralisation par départements](#centralisation-par-départements)
+    - [Centralisation par départements](#centralisation-par-départements)
     - [Acheminement du courrier de proche en proche](#acheminement-du-courrier-de-proche-en-proche)
     - [Le cas spécial des départements d'outre-mer](#le-cas-spécial-des-départements-doutre-mer)
   - [L'adresse IP (Internet Protocol)](#ladresse-ip-internet-protocol)
@@ -81,7 +81,7 @@ Voici le trajet qui sera effectué par notre courrier :
 
 Cet algorithme n'est pas optimal, car il faut effectuer **autant de trajet qu'il y a de courriers à remettre**.
 
-## Centralisation par départements
+### Centralisation par départements
 
 Pour optimiser la remise de nos courriers, nous allons découper la France en départements, et chaque département disposera d'un "bureau distributeur" en charge de récupérer tous les courriers en partance de son département. Cette première étape permettra de rassembler tous les courriers du département pour les trier selon leur destination, et pouvoir ainsi grouper les courriers que l'on doit emmener même bureau distributeur de destination.
 
@@ -266,14 +266,68 @@ Si on met côte à côte un code postal et une adresse IP, on peut faire un para
 | Adresse IP d'un petit réseau | `193.43.55.67`   | `193.43.55.0` | `0.0.0.67`   |
 | Adresse IP d'un grand réseau | `145.12.149.78`  | `145.12.0.0`  | `0.0.159.78` |
 
-Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de bits. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
 
-| Type                                  | Adresse complète                        | Sous réseau                            | Identifiant                                     |
-| ------------------------------------- | --------------------------------------- | -------------------------------------- | ----------------------------------------------- |
-| Adresse IP en bits                    | `11000001.0010  1011.00110111.01000011` | `11000001.0010 0000.00000000.00000000` | `00000000.00000000.0000 1011.00110111.01000011` |
-| Adresse IP en représentation décimale | `193.43.55.67`                          | `193.32.0.0`                           | `0.11.55.67`                                    |
+### Le masque de sous-réseau
 
-Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format `CIDR`, que nous allons expliquer dans la section suivante.
+Maintenant que l'on sait qu'une adresse IP est constitué de 2 informations, il faut un moyen de représenter cette information.
+
+Pendant longtemps, pour retrouver l'adresse du réseau, on associait à l'adresse IP un **masque de sous réseau** que l'on représente sous le même format que l'adresse IP.
+Dans cet notation, le **masque binaire** permet de retrouver l'adresse du réseau en appliquant un `AND` binaire :
+
+```
+       193      43       55       67
+    11000001 00101011 00110111 01000011
+AND
+       255      255      255       0
+    11111111 11111111 11111111 00000000
+ =
+       193      43       55        0
+    11000001 00101011 00110111 01000011
+```
+
+Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de **bits**. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
+
+```
+       193      43       55       67
+    11000001 00101011 00110111 01000011
+AND
+       255      240       0        0
+    11111111 11110000 00000000 00000000
+ =
+       193      32        0        0
+    11000001 00100000 00000000 00000000
+```
+
+Récapitulons ces 2 exemples en format décimal :
+
+| Adresse IP   | Masque de sous réseau | Sous réseau |
+| ------------ | --------------------- | ----------- |
+| 192.43.55.67 | 255.255.255.0         | 192.43.55.0 |
+| 192.43.55.67 | 255.240.0.0           | 192.32.0.0  |
+
+Cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire. Mais il existe une représentation plus simple et plus concise : la notation **CIDR**.
+
+### La notation CIDR
+
+Heureusement, une notation plus compréhensible a été trouvée : le CIDR (_Classless Inter-Domain Routing_). Cette notation ajoute simplement un slash `/` suivi d'un nombre décimal indiquant le nombre de bit de l'adresse réseau à partir du début.
+
+Reprenons le même exemple que précédemment mais avec la notation CIDR, l'adresse `193.43.55.67/24` :
+
+```
+<---------24 bits-------->
+11000001 00101011 00110111 01000011
+```
+
+| Adresse CIDR    | Réseau      |
+| --------------- | ----------- |
+| 193.43.55.67/24 | 193.43.55.0 |
+| 193.43.55.67/17 | 193.32.0.0  |
+| 193.43.55.67/3  | 192.0.0.0   |
+
+
+> Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
+
+Tous ces calculs peuvent être un peu fastidieux. Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format `CIDR`, ou une adresse IP et un masque de sous-réseau.
 
 ```bash
 $ ipcalc 193.43.55.67/12
@@ -287,34 +341,6 @@ HostMax:   193.47.255.254       11000001.0010 1111.11111111.11111110
 Broadcast: 193.47.255.255       11000001.0010 1111.11111111.11111111
 Hosts/Net: 1048574               Class C
 ```
-
-### Le masque de sous-réseau
-
-Pendant longtemps, pour retrouver l'adresse du réseau, on associait l'**adresse IP** avec un **masque binaire**, par exemple :
-
-|                           | Représentation décimale | Représentation binaire                |
-| ------------------------- | ----------------------- | ------------------------------------- |
-| Adresse du nœud           | `193.43.55.67`          | `11000001 00101011 00110111 01000011` |
-| Masque de sous-réseau     | `255.255.255.0`         | `11111111 11111111 11111111 00000000` |
-| Résultat du `AND` binaire | `193.43.55.0`           | `11000001 00101011 00110111 00000000` |
-
-Dans cet notation, le **masque** permet de retrouver l'adresse du réseau en appliquant un `AND` binaire
-
-Cette notation est très "proche" du fonctionnement interne, car pour trouver le réseau à partir de l'adresse, le processeur va appliquer une opération `AND` binaire. Mais il existe une représentation plus simple et plus concise : la notation **CIDR**.
-
-### La notation CIDR
-
-Heureusement, une notation plus compréhensible a été trouvée : le CIDR (_Classless Inter-Domain Routing_). Cette notation ajoute simplement un slash `/` suivi d'un nombre décimal indiquant la taille de l'adresse réseau.
-
-Reprenons le même exemple que précédemment mais avec la notation CIDR, le masque `255.255.255.0` est transformé en `/24` :
-
-|                             | Représentation CIDR |
-| --------------------------- | ------------------- |
-| Adresse du nœud             | 193.43.55.67/24     |
-| Adresse du réseau           | 193.43.55.0         |
-| Nombre d'appareil possibles | 254                 |
-
-> Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
 
 ### Organisation en sous-réseaux
 
