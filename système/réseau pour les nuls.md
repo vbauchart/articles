@@ -23,6 +23,11 @@
     - [Les paquets spéciaux ICMP](#les-paquets-spéciaux-icmp)
     - [Le _Time To Live_](#le-time-to-live)
     - [Exemple d'architecture réseau](#exemple-darchitecture-réseau)
+  - [Questions pratiques de la vie de tous les jours](#questions-pratiques-de-la-vie-de-tous-les-jours)
+      - [Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?](#quand-je-tape-la-commande-ping-quest-ce-que-je-teste-en-réalité-)
+    - [Pourquoi dit-on que Internet est décentralisé et robuste ?](#pourquoi-dit-on-que-internet-est-décentralisé-et-robuste-)
+    - [Ma box internet, c'est un switch ou un routeur?\_](#ma-box-internet-cest-un-switch-ou-un-routeur_)
+    - [J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par défaut"](#jai-un-nouveau-pc-mais-je-ne-sais-jamais-quoi-mettre-dans-adresse-de-sous-réseau-et-passerelle-par-défaut)
   - [Conclusion](#conclusion)
 
 ## Introduction
@@ -466,11 +471,22 @@ Mais se passerait-il si un routeur mal configuré transférait les données au m
 
 Pour palier ce problème de confiance, chaque paquet produit possède dans son entête un nombre entier, nommé **Time To Live** (**Temps restant à vivre**), abrégé `TTL`. A chaque fois qu'un paquet est lu par un routeur et recopier vers un autre réseau, ce nombre est décrémenté de 1. Un routeur qui doit envoyer un paquet avec un `TTL` de 0 le considérera comme perdu et informera l'expéditeur par un paquet ICMP de type _Time Exceeded_
 
-On notera que ici aussi, il est possible de détourner cette noton de `TTL` afin d'obtenir des informations sur les routeurs qu'un paquet traverse jusqu'à sa destination. Par exemple, si je veux connaître l'adresse IP du troisième routeur traversé par mes paquets, je peux forcer le `TTL` à 3. Le troisième routeur traversé verra le `TTL` à 0 et renverra un paquet ICMP avec son adresse dans le champ `source`. C'est exactement le fonctionnement de la commande `traceroute` qui envoie successivement des paquets avec un `TTL` de 1, puis 2, puis 3, etc... Là encore il est facile de bloquer ces types de paquets si l'on considère que c'est une faille de sécurité.
+On notera que ici aussi, il est possible de détourner cette notion de `TTL` afin d'obtenir des informations sur les routeurs qu'un paquet traverse jusqu'à sa destination. Par exemple, si je veux connaître l'adresse IP du troisième routeur traversé par mes paquets, je peux forcer le `TTL` à 3. Le troisième routeur traversé verra le `TTL` à 0 et renverra un paquet ICMP avec son adresse dans le champ `source`. C'est exactement le fonctionnement de la commande `traceroute` qui envoie successivement des paquets avec un `TTL` de 1, puis 2, puis 3, etc... Là encore il est facile de bloquer ces types de paquets si l'on considère que c'est une faille de sécurité.
 
 ### Exemple d'architecture réseau
 
 ![Alt text](images/nsi_term_archi_rout_1.png)
+
+## Questions pratiques de la vie de tous les jours
+
+#### Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?
+
+### Pourquoi dit-on que Internet est décentralisé et robuste ?
+
+### Ma box internet, c'est un switch ou un routeur?_
+
+### J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par défaut"
+
 
 ## Conclusion
 
