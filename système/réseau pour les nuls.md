@@ -57,7 +57,7 @@ Nous allons donc imaginer la mise en place d'un service postal fictif simplifié
 
 Imaginons une personne qui doit envoyer un courrier depuis Saint-Médard-en-Jalles (`33160`) vers Démuin (`80110`). Le courrier est d'abord être déposé dans la boite aux lettres de la commune où il sera pris en charge par le système postal qui sera en charge de l'acheminer dans la boite aux lettres de la commune de destination.
 
-De plus, un code postal est constitué d'un numéro de département par ses 2 premiers digits, puis d'un identifiant de commune sur les 3 derniers digits.
+De plus, un code postal est constitué d'un numéro de département par ses 2 premiers chiffres, puis d'un identifiant de commune sur les 3 derniers chiffres.
 
 | Commune                | Code postal | Département | Identifiant de commune |
 | ---------------------- | ----------- | ----------- | ---------------------- |
@@ -182,12 +182,12 @@ Ce système de routage a beaucoup d'avantages :
 
 ### Le cas spécial des départements d'outre-mer
 
-Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 digits afin de pouvoir créer des numéros de département sur 3 digits, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
+Lors du rattachement des départements d'outre-mer au système postal français, il s'est posé la question de l'attribution de nouveaux codes postaux à ces départements. Malheureusement, la France commençait à ne **plus avoir assez de numéros de département disponibles** ! Il aurait été possible modifier le système pour le faire passer sur 6 chiffres afin de pouvoir créer des numéros de département sur 3 chiffres, mais ce genre de changement est généralement très coûteux. Par chance, ces départements étaient généralement des petits territoires avec assez peu de communes.
 
-Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 digits :
+Il a donc été trouvé une solution plus simple qui résolvait tous ces problèmes tout en gardant le code postal sur 5 chiffres :
 
 1. **Réserver** le code `97` à l'ensemble des département d'outre-mer
-2. **Augmenter à 3 digits le code du département, et "réduire" à 2 digits l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 digits, mais en contrepartie, nous sommes limités à identifier moins de 99 communes par département.
+2. **Augmenter à 3 chiffres le code du département, et "réduire" à 2 chiffres l'identifiant de la commune**. En faisant ce choix, nous gardons un code postal sur 5 chiffres, mais en contrepartie, nous sommes limités à identifier moins de 99 communes par département.
 
 | Commune                | Code postal | Département | Commune |
 | ---------------------- | ----------- | ----------- | ------- |
@@ -200,23 +200,23 @@ Pour adapter ces nouveaux identifiants au système existant, c'est assez simple 
 
 - Au niveau de chaque commune, on doit stocker un nouveau paramètre qui permet de calculer le centre distributeur du département.
 
-| Code postal de la commune | Nombre de digit identifiant le département | Code postal du bureau distributeur |
+| Code postal de la commune | Nombre de chiffre identifiant le département | Code postal du bureau distributeur |
 | ------------------------- | ------------------------------------------ | ---------------------------------- |
 | `33160`                   | 2                                          | `33000`                            |
 | `80110`                   | 2                                          | `80000`                            |
 | `97114​`                  | 3                                          | `97100`                            |
 | `97460​`                  | 3                                          | `97400`                            |
 
-- Au niveau des bureaux de distribution, on doit également connaître le nombre de digits à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grands.
+- Au niveau des bureaux de distribution, on doit également connaître le nombre de chiffres à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grands.
 
-| Code postal de la commune | Nombre de digit identifiant le département | Département |
+| Code postal de la commune | Nombre de chiffre identifiant le département | Département |
 | ------------------------- | ------------------------------------------ | ----------- |
 | `33160`                   | 2                                          | `33`        |
 | `80110`                   | 2                                          | `80`        |
 | `97114​`                  | 3                                          | `971`       |
 | `97460​`                  | 3                                          | `974`       |
 
-> Dans l'analogie avec un réseau IP, le nombre de digit identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
+> Dans l'analogie avec un réseau IP, le nombre de chiffre identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
 
 ## L'adresse IP (Internet Protocol)
 
@@ -351,7 +351,7 @@ Hosts/Net: 1048574               Class C
 
 Contrairement aux départements, les sous-réseaux peuvent eux-mêmes êtres divisés en plusieurs sous-réseaux, qui eux-mêmes peuvent être divisés en sous-sous-réseaux, etc...
 
-Si la notion de sous-réseau est finalement peu utile pour le développeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "digits" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
+Si la notion de sous-réseau est finalement peu utile pour le développeur d'application, elle est en revanche cruciale pour l'architecte réseau. En effet, que ce soit dans le Cloud ou sur un réseau physique, l'architecte réseau va avoir à sa disposition un réseau qu'il faudra **découper** intelligemment. Par exemple, il faut créer suffisamment de sous-réseaux pour créer des règles d'accès fines (quel sous-réseau aura le droit d'aller vers internet, quel sous-réseau contiendra les bases de données, etc...) tout en gardant assez de "chiffres" disponibles pour pouvoir créer suffisamment d'adresses à l'intérieur de ces sous-réseaux.
 
 ```mermaid
 flowchart TD
