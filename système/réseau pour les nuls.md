@@ -287,10 +287,10 @@ AND
     11111111 11111111 11111111 00000000
  =
        193      43       55        0
-    11000001 00101011 00110111 01000011
+    11000001 00101011 00110111 00000000
 ```
 
-Malheureusement, ça se complique un peu avec une adresse IP, car elle n'est pas constitué de chiffres décimaux, mais de **bits**. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
+Malheureusement, le calcul n'est pas aussi trivial qu'un code postal, car une adresse IP n'est pas constitué de chiffres décimaux, mais de **bits**. Les chiffres ne sont qu'une représentation texte plus facile à lire et écrire. Mais il faut se rappeler que le découpage est fait au niveau des bits !
 
 ```
        193      43       55       67
@@ -332,7 +332,7 @@ Reprenons le même exemple que précédemment mais avec la notation CIDR, l'adre
 
 > Pour faire le parallèle avec le service postal, on pourrait dire que Saint-Médard-en-Jalles est à l'adresse `33160/2` alors que Trois-Rivières est à l'adresse `97114​/3`
 
-Tous ces calculs peuvent être un peu fastidieux. Heureusement, il existe un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format `CIDR`, ou une adresse IP et un masque de sous-réseau.
+Tous ces calculs peuvent être un peu fastidieux. Heureusement, on utilise un petit utilitaire nommé `ipcalc` qui nous évitera de faire ces calculs de tête et nous donnera toutes les informations nécessaires sur une adresse IP. Il prend en paramètre une adresse IP au format `CIDR`, ou une adresse IP et un masque de sous-réseau.
 
 ```bash
 $ ipcalc 193.43.55.67/12
