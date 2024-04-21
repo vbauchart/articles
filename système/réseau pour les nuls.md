@@ -24,10 +24,10 @@
     - [Le _Time To Live_](#le-time-to-live)
     - [Exemple d'architecture réseau](#exemple-darchitecture-réseau)
   - [Questions pratiques de la vie de tous les jours](#questions-pratiques-de-la-vie-de-tous-les-jours)
-      - [Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?](#quand-je-tape-la-commande-ping-quest-ce-que-je-teste-en-réalité-)
+    - [La commande `ping` me répond correctement, pourtant le site web semble inaccessible](#la-commande-ping-me-répond-correctement-pourtant-le-site-web-semble-inaccessible)
     - [Pourquoi dit-on que Internet est décentralisé et robuste ?](#pourquoi-dit-on-que-internet-est-décentralisé-et-robuste-)
-    - [Ma box internet, c'est un switch ou un routeur?\_](#ma-box-internet-cest-un-switch-ou-un-routeur_)
-    - [J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par défaut"](#jai-un-nouveau-pc-mais-je-ne-sais-jamais-quoi-mettre-dans-adresse-de-sous-réseau-et-passerelle-par-défaut)
+    - [Ma box internet, c'est un switch ou un routeur?](#ma-box-internet-cest-un-switch-ou-un-routeur)
+    - [J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Masque de sous-réseau" et "Passerelle par défaut"](#jai-un-nouveau-pc-mais-je-ne-sais-jamais-quoi-mettre-dans-masque-de-sous-réseau-et-passerelle-par-défaut)
   - [Conclusion](#conclusion)
 
 ## Introduction
@@ -201,20 +201,20 @@ Pour adapter ces nouveaux identifiants au système existant, c'est assez simple 
 - Au niveau de chaque commune, on doit stocker un nouveau paramètre qui permet de calculer le centre distributeur du département.
 
 | Code postal de la commune | Nombre de chiffre identifiant le département | Code postal du bureau distributeur |
-| ------------------------- | ------------------------------------------ | ---------------------------------- |
-| `33160`                   | 2                                          | `33000`                            |
-| `80110`                   | 2                                          | `80000`                            |
-| `97114​`                  | 3                                          | `97100`                            |
-| `97460​`                  | 3                                          | `97400`                            |
+| ------------------------- | -------------------------------------------- | ---------------------------------- |
+| `33160`                   | 2                                            | `33000`                            |
+| `80110`                   | 2                                            | `80000`                            |
+| `97114​`                  | 3                                            | `97100`                            |
+| `97460​`                  | 3                                            | `97400`                            |
 
 - Au niveau des bureaux de distribution, on doit également connaître le nombre de chiffres à enlever pour connaître le département correspondant. L'algorithme lui ne change pas, il manipule uniquement des nombres plus grands.
 
 | Code postal de la commune | Nombre de chiffre identifiant le département | Département |
-| ------------------------- | ------------------------------------------ | ----------- |
-| `33160`                   | 2                                          | `33`        |
-| `80110`                   | 2                                          | `80`        |
-| `97114​`                  | 3                                          | `971`       |
-| `97460​`                  | 3                                          | `974`       |
+| ------------------------- | -------------------------------------------- | ----------- |
+| `33160`                   | 2                                            | `33`        |
+| `80110`                   | 2                                            | `80`        |
+| `97114​`                  | 3                                            | `971`       |
+| `97460​`                  | 3                                            | `974`       |
 
 > Dans l'analogie avec un réseau IP, le nombre de chiffre identifiant la commune est appelé un **masque de sous-réseau** (**subnet mask** ou **netmask** en anglais).
 
@@ -416,7 +416,7 @@ Cela implique que l'administrateur système n'a pas le droit à l'erreur :
 - Si l'administrateur attribue une adresse à un appareil qui ne correspond pas au réseau qui l'entoure, il ne recevra jamais de données.
 - Si l'administrateur donne la même adresse à 2 appareils du même réseau, les 2 appareil réclameront les mêmes données et il est probable que chacun de ces appareil ne reçoivent que des données tronquées.
 
-Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer les adresses aux nouveaux arrivant sur le réseau.
+Heureusement il existe des techniques pour maintenir un réseau sans se tromper, comme par exemple le `DCHP` qui s'occupera de distribuer correctement les adresses aux nouveaux arrivant sur le réseau.
 
 Attention, dans le cas où un appareil possède plusieurs cartes réseaux, chaque carte est considérée comme un nœud indépendant et c'est le système d'exploitation qui devra décider quand envoyer des paquets sur l'une ou l'autre carte.
 
@@ -449,7 +449,7 @@ Lorsqu'un routeur reçoit des données à destination d'une adresse IP, il doit 
 
 Les tables de routage de chaque routeur peuvent être configurées manuellement sur des petits réseaux, mais plus généralement on utilisera des protocoles de construction dynamique des tables de routage, comme `BGP` ou `OSPF`.
 
-Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner d'information de leurs propres configurations. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
+Ces protocoles sont algorithmiquement complexes, car tous les routeurs du réseaux vont demander aux routeurs voisins de leur donner l'information de leurs propres configurations. Par un système d'échange de proche en proche, chaque routeur finira par faire converger sa propre table de routage vers un état stable qui prendra en compte l'ensemble des adresses du réseau. Une fois que la configuration a convergé vers une configuration stable, chaque routeur est autonome pour prendre ses décisions de routage. En cas de perte  ou d'ajout d'un routeur sur le réseau, les nouvelles tables de routages seront recalculées.
 
 > Les table de routages correspondent aux tableaux de redirections dans l'analogie avec le système postal. Ils font le travail des bureaux de distribution lors du transfert de courrier vers un département limitrophe.
 
@@ -457,7 +457,7 @@ Ces protocoles sont algorithmiquement complexes, car tous les routeurs du résea
 
 En plus des paquets de données circulant sur le réseau, il existe des paquets spéciaux ne contenant pas de données à acheminer, mais qui contiennent à la place une information d'état envoyé par les routeurs pour signaler un événement ou répondre à une demande d'état. Ce sont les paquet **ICMP** (_Internet Control Message Protocol_).
 
-Le plus connu est le paquet ICMP de type `echo` : Lorsqu'un appareil ou un routeur du réseau reçoit ce paquet, il se contente de le renvoyer à l'émetteur. C'est le paquet envoyé par la commande bien connue `ping`. Mais c'est probablement le type de paquet ICMP le moins utile en réalité. Il est d'ailleurs souvent bloqué par les firewall, car une commande `echo` peut donner de l'information à un potentiel attaquant, par exemple pour scanner le réseau à la recherche des appareils connectés.
+Le plus connu est le paquet ICMP de type `echo` : Lorsqu'un appareil ou un routeur du réseau reçoit ce paquet, il se contente de le renvoyer à l'émetteur. Mais c'est probablement le type de paquet ICMP le moins utile en réalité. Il est d'ailleurs souvent bloqué par les firewall, car une commande `echo` peut donner de l'information à un potentiel attaquant, par exemple pour scanner le réseau à la recherche des appareils connectés.
 
 En revanche, les type de paquet ICMP les plus utiles sont les messages indiquant à l'émetteur qu'une erreur s'est produite pendant l'acheminement d'un paquet de donnée.
 
@@ -479,14 +479,44 @@ On notera que ici aussi, il est possible de détourner cette notion de `TTL` afi
 
 ## Questions pratiques de la vie de tous les jours
 
-#### Quand je tape la commande `ping`, qu'est-ce que je teste en réalité ?
+### La commande `ping` me répond correctement, pourtant le site web semble inaccessible
+
+Comme nous l'avons vu, la commande `ping` utilise le protocole ICMP pour vérifier que les paquets atteignent bien une adresse du réseau. Mais le protocole IP s'arrête au routage des paquets, et il faut des protocoles additionnels comme TCP ou UDP pour gérer les ports ou l'ordre des paquets.
 
 ### Pourquoi dit-on que Internet est décentralisé et robuste ?
 
-### Ma box internet, c'est un switch ou un routeur?_
+On remarque qu'à aucun moment il n'est nécessaire d'avoir un serveur central de contrôle. Tous les routeurs s'auto-organisent avec leurs voisins sans avoir besoin de connaître l'ensemble des routeurs. L'acheminent des paquets se fait de proche en proche et sans historique. Comme il peut exister plusieurs routes possibles vers une adresse, la résilience est également assurée.
 
-### J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Adresse de sous-réseau" et "Passerelle par défaut"
+### Ma box internet, c'est un switch ou un routeur?
 
+Les deux mon capitaine!! Vous aurez sûrement remarqué qu'une box internet dispose de plusieurs ports réseau en plus du port vers l’extérieur (fibre optique ou ADSL). la box se comporte donc en routeur entre l'intérieur et l’extérieur du réseau, puis comme d'un switch pour les ports intérieur du réseau.
+
+```mermaid
+flowchart LR
+A[Internet] -->|ADSL| router
+    subgraph Box
+        router --> switch
+        router --> wifi
+    end
+    switch --> TV
+    switch --> PC
+    wifi --> Console
+    wifi --> Smartphone
+```
+
+> Bien que le WiFi soit un protocole distinct, on peut considérer qu'il se comporte également comme un switch.
+
+> Une box internet moderne contient en réalité beaucoup d'autres fonctionnalités qui facilite la mise en place d'un réseau local automatiquement : DHCP, DNS, firewall, VPN et même des serveurs web, P2P...
+
+### J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Masque de sous-réseau" et "Passerelle par défaut"
+
+Pour raccorder un nouvel équipement à un réseau local (donc uniquement à un switch), on peut en théorie attribuer absolument n'importe quelle adresse IP à la seule condition qu'elle ne doit pas être déjà attribuée à un autre appareil du réseau. Dans ce cas, le "masque" doit indiquer que toute adresse est locale par la valeur `0.0.0.0`. L'adresse de "passerelle", autrement dit le routeur, n'existe pas dans cette configuration.
+
+> Dans la réalité, on évite cette pratique et on utilise toujours par convention la plage d'IP spéciale, dite "privée", même s'il n'y a pas de routeur.
+
+Dans le cas où notre ordinateur va devoir envoyer des paquets à des appareils sur un autre réseau que le sien, il est nécessaire de lui attribuer une adresse dans la plage des adresses IP avec laquelle on a configuré le routeur. Il faut également configurer le masque de sous-réseau avec celui du routeur. Dans le champ "passerelle" on notera donc l'IP du routeur.
+
+> Normalement, les réseaux modernes ne sont plus configurés manuellement, car le protocole DHCP permet d'éviter cette tâche fastidieuse.
 
 ## Conclusion
 
