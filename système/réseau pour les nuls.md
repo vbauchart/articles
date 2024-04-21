@@ -25,9 +25,10 @@
     - [Exemple d'architecture réseau](#exemple-darchitecture-réseau)
   - [Questions pratiques de la vie de tous les jours](#questions-pratiques-de-la-vie-de-tous-les-jours)
     - [La commande `ping` me répond correctement, pourtant le site web semble inaccessible](#la-commande-ping-me-répond-correctement-pourtant-le-site-web-semble-inaccessible)
-    - [Pourquoi dit-on que Internet est décentralisé et robuste ?](#pourquoi-dit-on-que-internet-est-décentralisé-et-robuste-)
+    - [Pourquoi dit-on que Internet est décentralisé et résilient ?](#pourquoi-dit-on-que-internet-est-décentralisé-et-résilient-)
     - [Ma box internet, c'est un switch ou un routeur?](#ma-box-internet-cest-un-switch-ou-un-routeur)
     - [J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Masque de sous-réseau" et "Passerelle par défaut"](#jai-un-nouveau-pc-mais-je-ne-sais-jamais-quoi-mettre-dans-masque-de-sous-réseau-et-passerelle-par-défaut)
+    - [Est-ce que IP est sécurisé ?](#est-ce-que-ip-est-sécurisé-)
   - [Conclusion](#conclusion)
 
 ## Introduction
@@ -483,7 +484,7 @@ On notera que ici aussi, il est possible de détourner cette notion de `TTL` afi
 
 Comme nous l'avons vu, la commande `ping` utilise le protocole ICMP pour vérifier que les paquets atteignent bien une adresse du réseau. Mais le protocole IP s'arrête au routage des paquets, et il faut des protocoles additionnels comme TCP ou UDP pour gérer les ports ou l'ordre des paquets.
 
-### Pourquoi dit-on que Internet est décentralisé et robuste ?
+### Pourquoi dit-on que Internet est décentralisé et résilient ?
 
 On remarque qu'à aucun moment il n'est nécessaire d'avoir un serveur central de contrôle. Tous les routeurs s'auto-organisent avec leurs voisins sans avoir besoin de connaître l'ensemble des routeurs. L'acheminent des paquets se fait de proche en proche et sans historique. Comme il peut exister plusieurs routes possibles vers une adresse, la résilience est également assurée.
 
@@ -517,6 +518,15 @@ Pour raccorder un nouvel équipement à un réseau local (donc uniquement à un 
 Dans le cas où notre ordinateur va devoir envoyer des paquets à des appareils sur un autre réseau que le sien, il est nécessaire de lui attribuer une adresse dans la plage des adresses IP avec laquelle on a configuré le routeur. Il faut également configurer le masque de sous-réseau avec celui du routeur. Dans le champ "passerelle" on notera donc l'IP du routeur.
 
 > Normalement, les réseaux modernes ne sont plus configurés manuellement, car le protocole DHCP permet d'éviter cette tâche fastidieuse.
+
+### Est-ce que IP est sécurisé ?
+
+Malheureusement, c'est une grande faiblesse de ce protocole !
+
+Grâce à sa décentralisation, le protocole IP est très résilient, mais il est en revanche très facile de configurer un appareil ou un routeur de façon illégitime, dans le but par exemple de falsifier son identité.
+
+Une des parades pour se prémunir de la faiblesse du protocole IP sera d'ajouter des couches de sécurité cryptographiques entre les deux appareils qui échangent des données sur ce type de réseau (comme TLS par exemple)
+
 
 ## Conclusion
 
