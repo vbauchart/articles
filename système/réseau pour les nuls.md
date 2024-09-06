@@ -1,6 +1,6 @@
-# Comprendre le protocole IP quand on est pas un administrateur réseau.
+# Comprendre le protocole IP quand on n'est pas un administrateur réseau.
 
-- [Comprendre le protocole IP quand on est pas un administrateur réseau.](#comprendre-le-protocole-ip-quand-on-est-pas-un-administrateur-réseau)
+- [Comprendre le protocole IP quand on n'est pas un administrateur réseau.](#comprendre-le-protocole-ip-quand-on-est-pas-un-administrateur-réseau)
   - [Introduction](#introduction)
   - [Description d'un système postal simplifié](#description-dun-système-postal-simplifié)
     - [Remise de courrier simple](#remise-de-courrier-simple)
@@ -274,7 +274,7 @@ Si on met côte à côte un code postal et une adresse IP, on peut faire un para
 
 ### Le masque de sous-réseau
 
-Maintenant que l'on sait qu'une adresse IP est constitué de 2 informations, il faut un moyen de représenter cette information.
+Maintenant que l'on sait qu'une adresse IP est constituée de 2 informations, il faut un moyen de représenter cette information.
 
 Pendant longtemps, pour retrouver l'adresse du réseau, on associait à l'adresse IP un **masque de sous réseau** que l'on représente sous le même format que l'adresse IP.
 Dans cet notation, le **masque binaire** permet de retrouver l'adresse du réseau en appliquant un `AND` binaire :
@@ -506,7 +506,7 @@ A[Internet] -->|ADSL| router
 
 > Bien que le WiFi soit un protocole distinct, on peut considérer qu'il se comporte également comme un switch.
 
-> Une box internet moderne contient en réalité beaucoup d'autres fonctionnalités qui facilite la mise en place d'un réseau local automatiquement : DHCP, DNS, firewall, VPN et même des serveurs web, P2P...
+> Une box internet moderne contient en réalité beaucoup d'autres fonctionnalités qui facilite la mise en place d'un réseau local automatiquement : DHCP (pour l'attribution automatique d'adresses IP), DNS (pour la résolution de noms de domaines), firewall (pour protéger le réseau), VPN (pour sécuriser les connexions à distance) et même des serveurs web, P2P......
 
 ### J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Masque de sous-réseau" et "Passerelle par défaut"
 
