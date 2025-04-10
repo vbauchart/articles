@@ -2,5 +2,6 @@
     "cSpell.words": [
         "Démuin"
     ],
-    "cSpell.language": "en,fr"
+    "cSpell.language": "en,fr",
+    "markdown.validate.enabled": true
 }
