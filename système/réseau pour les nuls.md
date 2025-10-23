@@ -29,6 +29,7 @@
     - [Ma box internet, c'est un switch ou un routeur?](#ma-box-internet-cest-un-switch-ou-un-routeur)
     - [J'ai un nouveau PC, mais je ne sais jamais quoi mettre dans "Masque de sous-réseau" et "Passerelle par défaut"](#jai-un-nouveau-pc-mais-je-ne-sais-jamais-quoi-mettre-dans-masque-de-sous-réseau-et-passerelle-par-défaut)
     - [Est-ce que IP est sécurisé ?](#est-ce-que-ip-est-sécurisé-)
+    - [Pourquoi les administrateurs réseau parlent constamment de "couches" ?](#pourquoi-les-administrateurs-réseau-parlent-constamment-de-couches-)
   - [Conclusion](#conclusion)
 
 ## Introduction
@@ -527,6 +528,21 @@ Grâce à sa décentralisation, le protocole IP est très résilient, mais il es
 
 Une des parades pour se prémunir de la faiblesse du protocole IP sera d'ajouter des couches de sécurité cryptographiques entre les deux appareils qui échangent des données sur ce type de réseau (comme TLS par exemple)
 
+### Pourquoi les administrateurs réseau parlent constamment de "couches" ?
+
+Vous avez surement déjà entendu dire des phrases comme "c'est un routage niveau 2 ou 3", ou encore "maintenant, beaucoup d'application utilise la couche 7 pour communiquer". Ici on parle des fameuses couches OSI qui décrivent les différents étages de protocoles pour faire communiquer deux machines sur un réseau. Par exemple la couche 1, c'est tout simplement l'électricité dans qui transporte des 0 ou des 1 (des *bits*) d'un bout à l'autre d'un cable. Ces *bits* sont utilisés pour envoyés des paquets d'un noeud à l'autre, pour cela on envoie les *bits* par paquet auxquels on rajoute une information d'adresse MAC pour préciser le destinataire local : c'est la couche 2. Notre fameux protocole IP désigne la couche 3, et il permet de faire "sauter" un paquet d'un réseau à l'autre. La couche 4 va encore rajouter de l'information dans ces paquets afin de garantir la remise entre l'émetteur et le destinataire final : c'est par exemple le protocole TCP. 
+
+Vous noterez que chaque couche peut avoir une implémentation propre. Par exemple si la couche 1 n'est plus sur un cable en cuivre mais en Wifi, l'implémentation est totalement différente, en revanche le reste des couches comme IP reste inchangée.
+
+Exemples de protocoles pour chaque couches :
+
+
+| Couche | exemple de Protocoles    |
+| ------ | ------------------------ |
+| 1-2    | Cable Ethernet, Wifi, 4G |
+| 3      | IP, IPv6                 |
+| 4      | TCP, UDP                 |
+| 5-6-7  | HTTP, SSH, DNS           |
 
 ## Conclusion
 
