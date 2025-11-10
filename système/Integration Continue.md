@@ -92,9 +92,11 @@ Voici quelques outils couramment utilisés pour mettre en place une chaîne d'in
 
 | Outil | Fonctionnalités Clés |
 | :--- | :--- |
-| **Serveurs CI/CD (Jenkins, GitLab CI/CD, CircleCI, GoCD)** | Déclenchent automatiquement les builds et les tests à chaque validation (commit). |
-| **GitLab CI/CD** | Configuration des jobs stockée dans le dépôt (YAML). Intégration complète avec Git et utilisation intensive de Docker pour l'exécution des jobs. |
 | **Système de Versionnement (Git)** | Essentiel pour gérer la *mainline* partagée. |
+| **Outils CI/CD (Jenkins, GitLab CI/CD, CircleCI, GoCD)** | Déclenchent automatiquement les builds, les tests et les deploiemente à chaque validation (commit). |
+| **Containerisation (Docker) et Orchestration (Kubernetes)** | Permettent d'encapsuler les applications avec leurs dépendances et de déployer en une seule instruction. L'orchestration automatise le déploiement, la mise à l'échelle et la gestion des conteneurs en production. |
+
+
 
 ## Conclusion
 
