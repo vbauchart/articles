@@ -1,4 +1,24 @@
-# De la Chaîne d'Assemblage à la Livraison Continue
+# "CI/CD : La Révolution Invisible du Développement Logiciel"
+
+- ["CI/CD : La Révolution Invisible du Développement Logiciel"](#cicd--la-révolution-invisible-du-développement-logiciel)
+  - [Introduction](#introduction)
+  - [Le Modèle Séquentiel : Parfaitement Adapté à l'Industrie](#le-modèle-séquentiel--parfaitement-adapté-à-lindustrie)
+    - [La Fabrication Séquentielle dans l'Industrie](#la-fabrication-séquentielle-dans-lindustrie)
+  - [L'Adaptation au Logiciel : Le Waterfall et le Cycle en V](#ladaptation-au-logiciel--le-waterfall-et-le-cycle-en-v)
+    - [Un Avantage Majeur du Logiciel](#un-avantage-majeur-du-logiciel)
+    - [Les Problèmes du Waterfall Appliqué au Logiciel](#les-problèmes-du-waterfall-appliqué-au-logiciel)
+  - [La Crise de l'Intégration : Quand la Vitesse devient un Piège](#la-crise-de-lintégration--quand-la-vitesse-devient-un-piège)
+  - [La Solution : L'Intégration Continue et l'Agilité](#la-solution--lintégration-continue-et-lagilité)
+    - [Le Principe de l'Intégration Continue](#le-principe-de-lintégration-continue)
+    - [Les Pratiques Clés de l'Intégration Continue](#les-pratiques-clés-de-lintégration-continue)
+    - [Les Bénéfices de l'Intégration Continue](#les-bénéfices-de-lintégration-continue)
+  - [De la CI au CD : Le Déploiement Continu](#de-la-ci-au-cd--le-déploiement-continu)
+    - [Le CD : Une Extension Rendue Possible par les Outils Modernes](#le-cd--une-extension-rendue-possible-par-les-outils-modernes)
+    - [Le Pipeline de Déploiement](#le-pipeline-de-déploiement)
+    - [Les Fondations du CI/CD](#les-fondations-du-cicd)
+    - [Récapitulatif des Outils Clés](#récapitulatif-des-outils-clés)
+  - [Conclusion](#conclusion)
+
 
 ## Introduction
 
