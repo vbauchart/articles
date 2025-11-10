@@ -1,6 +1,6 @@
-# "CI/CD : La Révolution Invisible du Développement Logiciel"
+# CI/CD : La Révolution Invisible du Développement Logiciel
 
-- ["CI/CD : La Révolution Invisible du Développement Logiciel"](#cicd--la-révolution-invisible-du-développement-logiciel)
+- [CI/CD : La Révolution Invisible du Développement Logiciel](#cicd--la-révolution-invisible-du-développement-logiciel)
   - [Introduction](#introduction)
   - [Le Modèle Séquentiel : Parfaitement Adapté à l'Industrie](#le-modèle-séquentiel--parfaitement-adapté-à-lindustrie)
     - [La Fabrication Séquentielle dans l'Industrie](#la-fabrication-séquentielle-dans-lindustrie)
