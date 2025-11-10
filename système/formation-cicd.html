@@ -27,6 +27,18 @@
             border-radius: 5px;
             font-size: 0.7em;
         }
+        .example {
+            background: #2a4a2a;
+            padding: 15px;
+            border-left: 5px solid #4a4;
+            margin: 1em 0;
+        }
+        .warning {
+            background: #4a2a2a;
+            padding: 15px;
+            border-left: 5px solid #a44;
+            margin: 1em 0;
+        }
     </style>
 </head>
 <body>
@@ -74,12 +86,26 @@ Conception → Assemblage → Peinture → Contrôle → Livraison
                 </section>
 
                 <section>
+                    <h3>Exemple : Rappel de Véhicules</h3>
+                    <div class="warning">
+                        <p><strong>Cas réel :</strong> Airbag défectueux</p>
+                        <ul>
+                            <li>Découvert après 2 ans de production</li>
+                            <li>2,6 millions de véhicules rappelés</li>
+                            <li>Coût : 900 millions d'euros</li>
+                            <li>Image de marque détériorée</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
                     <h3>Pourquoi ça Marche ?</h3>
                     <p style="font-size: 1.5em; margin: 1em 0;">🚗 → ❌ Modification</p>
                     <ul>
                         <li><strong>Contrainte physique</strong> : produit non modifiable</li>
                         <li>Rappel de véhicules = extrêmement coûteux</li>
                         <li>Mieux vaut tout vérifier <em>avant</em></li>
+                        <li>Conception minutieuse justifiée</li>
                     </ul>
                 </section>
             </section>
@@ -96,16 +122,32 @@ Conception → Assemblage → Peinture → Contrôle → Livraison
                     <h3>Le Modèle Waterfall</h3>
                     <div class="diagram">
                         <pre>
-Analyse & Conception
+Analyse & Conception (3 mois)
         ↓
-   Développement
+   Développement (6 mois)
         ↓
-      Tests
+      Tests (2 mois)
         ↓
-   Déploiement
+   Déploiement (1 mois)
+
+Total : 12 mois
                         </pre>
                     </div>
                     <p><em>Inspiration directe de l'industrie</em></p>
+                </section>
+
+                <section>
+                    <h3>Exemple Concret : Projet E-commerce</h3>
+                    <div class="warning">
+                        <p><strong>Cycle de 12 mois</strong></p>
+                        <ul>
+                            <li>Jan-Mars : Spec complète du site</li>
+                            <li>Avril-Sept : Développement isolé</li>
+                            <li>Oct-Nov : Tests et découverte des bugs</li>
+                            <li>Décembre : Mise en production</li>
+                            <li>🎄 Problème : les specs ont 1 an !</li>
+                        </ul>
+                    </div>
                 </section>
 
                 <section>
@@ -128,6 +170,66 @@ Analyse & Conception
                     </ol>
                     <p style="margin-top: 1em;"><em>"Ça marchait chez nous"</em></p>
                 </section>
+
+                <section>
+                    <h3>Problème 1 : Les Passages de Relais</h3>
+                    <div class="diagram">
+                        <pre>
+Dev : "C'est fini !"
+  ↓
+QA : "Euh... c'est quoi ce bouton ?"
+  ↓
+Dev : "Ah oui, j'ai oublié de documenter"
+  ↓
+QA : "Et ça fait quoi en cas d'erreur ?"
+  ↓
+Dev : "Bonne question... 🤔"
+                        </pre>
+                    </div>
+                    <p><em>Perte de contexte à chaque transfert</em></p>
+                </section>
+
+                <section>
+                    <h3>Problème 2 : L'Effet Tunnel</h3>
+                    <div class="example">
+                        <p><strong>Exemple :</strong> Application mobile</p>
+                        <ul>
+                            <li>Développement de 6 mois</li>
+                            <li>Livraison : septembre 2023</li>
+                            <li>Découverte : iOS 17 a changé l'UI</li>
+                            <li>Le design spécifié en mars est obsolète</li>
+                            <li>Refonte nécessaire avant la sortie</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Problème 3 : Dette Technique</h3>
+                    <div class="diagram">
+                        <pre>
+Mois 1-2 : Code propre, bien structuré
+    ↓
+Mois 3-4 : "On verra le refactoring plus tard"
+    ↓
+Mois 5-6 : "Surtout ne rien toucher !"
+    ↓
+Intégration : Fichiers de 3000 lignes
+              Fonctions imbriquées sur 8 niveaux
+              Tests ? Quels tests ?
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Le Coût Réel</h3>
+                    <ul>
+                        <li>📊 Productivité : -40% en fin de projet</li>
+                        <li>⏰ Délais : +3 mois en moyenne</li>
+                        <li>💰 Budget : dépassement de 50-200%</li>
+                        <li>😓 Équipe : burnout et turnover</li>
+                        <li>📉 Qualité : bugs en production × 5</li>
+                    </ul>
+                </section>
             </section>
 
             <!-- Module 3 : Crise de l'Intégration -->
@@ -148,6 +250,19 @@ Analyse & Conception
                 </section>
 
                 <section>
+                    <h3>Exemple : L'Intégration de l'Enfer</h3>
+                    <div class="warning">
+                        <p><strong>Projet réel :</strong> 5 devs, 2 semaines de code</p>
+                        <ul>
+                            <li>Lundi : "On intègre vendredi"</li>
+                            <li>Vendredi : 847 conflits Git</li>
+                            <li>La fonction <code>getUserData()</code> a 3 versions différentes</li>
+                            <li>Résolution : 3 jours (au lieu de 1h prévue)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
                     <h3>L'Enfer de l'Intégration</h3>
                     <ul>
                         <li>🔴 Effondrement de la productivité</li>
@@ -156,6 +271,26 @@ Analyse & Conception
                         <li>❌ Refactoring impossible</li>
                         <li>📈 Bugs cumulatifs</li>
                     </ul>
+                </section>
+
+                <section>
+                    <h3>Conflits Sémantiques : Exemple</h3>
+                    <div class="diagram">
+                        <pre>
+Dev A (branche feature-A):
+  function calculatePrice(item) {
+    return item.price * 1.20; // TVA 20%
+  }
+
+Dev B (branche feature-B):
+  function calculatePrice(item) {
+    return item.price * 0.80; // Réduction 20%
+  }
+
+Merge : ✅ Pas de conflit Git !
+Runtime : 💥 Prix incohérents
+                        </pre>
+                    </div>
                 </section>
 
                 <section>
@@ -170,6 +305,19 @@ Plus on hésite à intégrer
     ↓
 Plus on attend...
                         </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Chiffres Réels</h3>
+                    <div class="example">
+                        <p><strong>Étude de cas :</strong> Entreprise 200 devs</p>
+                        <ul>
+                            <li>Intégration mensuelle → 5 jours de merge</li>
+                            <li>Intégration hebdo → 1 jour de merge</li>
+                            <li>Intégration quotidienne → 1h de merge</li>
+                            <li>Temps gagné : 80% !</li>
+                        </ul>
                     </div>
                 </section>
             </section>
@@ -206,6 +354,32 @@ Plus on attend...
                 </section>
 
                 <section>
+                    <h3>Exemple : Avant/Après</h3>
+                    <table style="font-size: 0.8em;">
+                        <tr>
+                            <th>Avant (Waterfall)</th>
+                            <th>Après (Agile + CI)</th>
+                        </tr>
+                        <tr>
+                            <td>Release tous les 6 mois</td>
+                            <td>Release toutes les 2 semaines</td>
+                        </tr>
+                        <tr>
+                            <td>Intégration : 1 fois</td>
+                            <td>Intégration : 50+ fois</td>
+                        </tr>
+                        <tr>
+                            <td>Feedback : après 6 mois</td>
+                            <td>Feedback : chaque sprint</td>
+                        </tr>
+                        <tr>
+                            <td>Bugs trouvés : 200+</td>
+                            <td>Bugs trouvés : 20-30</td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
                     <h3>4 Pratiques Clés de la CI</h3>
                     <ol>
                         <li><strong>Intégration fréquente</strong> : quotidienne (ou plus)</li>
@@ -216,13 +390,98 @@ Plus on attend...
                 </section>
 
                 <section>
+                    <h3>Pratique 1 : Intégration Fréquente</h3>
+                    <div class="example">
+                        <p><strong>Règle :</strong> Fusionner au moins 1x/jour</p>
+                        <ul>
+                            <li>Matin : récupérer la mainline</li>
+                            <li>Développer sur une feature courte (2-4h)</li>
+                            <li>Après-midi : commit + push</li>
+                            <li>Pas de branches qui vivent > 1 jour</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Pratique 2 : Build Automatisé</h3>
+                    <div class="diagram">
+                        <pre>
+git push
+  ↓
+Trigger automatique du pipeline
+  ↓
+npm install
+npm run lint
+npm run build
+  ↓
+✅ Build réussi en 3 minutes
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Pratique 3 : Code Auto-Testé</h3>
+                    <div class="example">
+                        <p><strong>Couverture de tests :</strong></p>
+                        <ul>
+                            <li>Tests unitaires : fonctions critiques</li>
+                            <li>Tests d'intégration : API endpoints</li>
+                            <li>Tests E2E : parcours utilisateur</li>
+                            <li>Objectif : 80%+ de couverture</li>
+                            <li>Temps d'exécution : < 10 minutes</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Exemple de Test Automatisé</h3>
+                    <pre><code class="javascript" data-trim>
+// tests/user.test.js
+describe('User Registration', () => {
+  it('should create user with valid email', async () => {
+    const user = await createUser({
+      email: 'test@example.com',
+      password: 'secure123'
+    });
+    expect(user.id).toBeDefined();
+    expect(user.email).toBe('test@example.com');
+  });
+
+  it('should reject invalid email', async () => {
+    await expect(createUser({
+      email: 'invalid-email',
+      password: 'secure123'
+    })).rejects.toThrow('Invalid email');
+  });
+});
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Pratique 4 : Correction Immédiate</h3>
+                    <div class="warning">
+                        <p><strong>La règle d'or :</strong></p>
+                        <ul>
+                            <li>Build 🔴 = Tout le monde s'arrête</li>
+                            <li>Option 1 : Fix en < 10 minutes</li>
+                            <li>Option 2 : Revert du commit</li>
+                            <li>Pas de nouveau commit tant que 🔴</li>
+                            <li>Mainline toujours verte = confiance</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
                     <h3>Le Workflow CI</h3>
                     <div class="diagram">
                         <pre>
-Dev → Commit → Build → Tests → ✅ / 🔴
-                                  ↓
-                              Correction
-                              immédiate
+09:00 Dev → Commit → Build → Tests → ✅
+10:30 Dev → Commit → Build → Tests → ✅
+14:00 Dev → Commit → Build → Tests → 🔴
+                                       ↓
+14:05                           Notification Slack
+14:10                           Fix + Re-commit
+14:15                           Build → Tests → ✅
                         </pre>
                     </div>
                 </section>
@@ -238,7 +497,7 @@ Dev → Commit → Build → Tests → ✅ / 🔴
                 </section>
 
                 <section>
-                    <h3>CI as Code</h3>
+                    <h3>CI as Code avec GitLab</h3>
                     <pre><code class="yaml" data-trim>
 # .gitlab-ci.yml
 stages:
@@ -247,11 +506,58 @@ stages:
   - deploy
 
 build:
+  stage: build
   script:
     - npm install
     - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+test:
+  stage: test
+  script:
+    - npm run test:unit
+    - npm run test:integration
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl apply -f k8s/
+  only:
+    - main
                     </code></pre>
-                    <p><em>Pipeline versionné avec le code</em></p>
+                </section>
+
+                <section>
+                    <h3>Pipeline GitLab : Vue d'ensemble</h3>
+                    <div class="diagram">
+                        <pre>
+Commit → Build (2 min) → Test (5 min) → Deploy (1 min)
+         ✅              ✅              ✅
+
+Artifacts disponibles
+Logs accessibles
+Notifications automatiques
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Exemple Réel : Notification Slack</h3>
+                    <div class="example">
+                        <pre>
+🔴 Build Failed: main branch
+Author: @alice
+Commit: "Fix user validation"
+Error: Test suite failed (2/150 tests)
+  ❌ should validate email format
+  ❌ should reject duplicate emails
+Duration: 4m 32s
+Pipeline: https://gitlab.com/project/-/pipelines/123
+                        </pre>
+                    </div>
                 </section>
             </section>
 
@@ -275,6 +581,21 @@ Commit → Build → Tests → Deploy
                 </section>
 
                 <section>
+                    <h3>Exemple : Avant CD</h3>
+                    <div class="warning">
+                        <p><strong>Processus manuel de déploiement :</strong></p>
+                        <ol>
+                            <li>SSH sur chaque serveur (5 serveurs)</li>
+                            <li>git pull sur chacun</li>
+                            <li>Redémarrer les services</li>
+                            <li>Vérifier les logs</li>
+                            <li>Temps total : 2-3 heures</li>
+                        </ol>
+                        <p><em>Et si erreur → rollback manuel 😰</em></p>
+                    </div>
+                </section>
+
+                <section>
                     <h3>Deux Révolutions Technologiques</h3>
                     <ol>
                         <li><strong>Kubernetes</strong> : Orchestration de conteneurs</li>
@@ -285,6 +606,31 @@ Commit → Build → Tests → Deploy
                 </section>
 
                 <section>
+                    <h3>Exemple : Déploiement Kubernetes</h3>
+                    <pre><code class="yaml" data-trim>
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mon-app
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: app
+        image: registry.com/mon-app:v1.2.3
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+                    </code></pre>
+                    <p><code>kubectl apply -f deployment.yaml</code> → Déployé !</p>
+                </section>
+
+                <section>
                     <h3>Le Pipeline de Déploiement</h3>
                     <div class="diagram">
                         <pre>
@@ -292,7 +638,68 @@ Commit → Build → Tests → Deploy
            ↓
 2. Tests avancés (fonctionnels, perf, sécu)
            ↓
-3. Déploiement automatique en prod
+3. Build Docker image
+           ↓
+4. Push to registry
+           ↓
+5. Deploy to staging
+           ↓
+6. Tests de fumée
+           ↓
+7. Deploy to production
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>GitLab CI/CD : Pipeline Complet</h3>
+                    <pre><code class="yaml" data-trim>
+build-docker:
+  stage: build
+  script:
+    - docker build -t $IMAGE:$CI_COMMIT_SHA .
+    - docker push $IMAGE:$CI_COMMIT_SHA
+
+deploy-staging:
+  stage: deploy-staging
+  script:
+    - kubectl set image deployment/app app=$IMAGE:$CI_COMMIT_SHA
+    - kubectl rollout status deployment/app
+  environment:
+    name: staging
+    url: https://staging.example.com
+
+deploy-production:
+  stage: deploy-production
+  script:
+    - kubectl set image deployment/app app=$IMAGE:$CI_COMMIT_SHA
+    - kubectl rollout status deployment/app
+  environment:
+    name: production
+    url: https://example.com
+  when: manual  # Déploiement manuel en prod
+  only:
+    - main
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Rolling Update avec Kubernetes</h3>
+                    <div class="diagram">
+                        <pre>
+État initial : 3 pods v1.0
+  [v1.0] [v1.0] [v1.0]
+
+Étape 1 : Créer 1 pod v1.1
+  [v1.0] [v1.0] [v1.0] [v1.1]
+
+Étape 2 : Supprimer 1 pod v1.0
+  [v1.0] [v1.0] [v1.1]
+
+Étape 3-4 : Continuer...
+  [v1.1] [v1.1] [v1.1]
+
+Zero downtime ! ✅
                         </pre>
                     </div>
                 </section>
@@ -308,13 +715,39 @@ Commit → Build → Tests → Deploy
                 </section>
 
                 <section>
+                    <h3>Infrastructure as Code : Terraform</h3>
+                    <pre><code class="hcl" data-trim>
+# main.tf
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  count         = 3
+
+  tags = {
+    Name = "web-server-${count.index}"
+  }
+}
+
+resource "aws_lb" "main" {
+  name               = "web-load-balancer"
+  load_balancer_type = "application"
+
+  # Configuration...
+}
+                    </code></pre>
+                    <p><code>terraform apply</code> → Infrastructure créée !</p>
+                </section>
+
+                <section>
                     <h3>Stack CI/CD Moderne</h3>
                     <table style="font-size: 0.7em;">
-                        <tr><td>Git</td><td>Versionnement</td></tr>
-                        <tr><td>GitLab CI/CD</td><td>Pipeline</td></tr>
-                        <tr><td>Docker</td><td>Containerisation</td></tr>
-                        <tr><td>Kubernetes</td><td>Orchestration</td></tr>
-                        <tr><td>Terraform</td><td>Infrastructure</td></tr>
+                        <tr><th>Catégorie</th><th>Outil</th><th>Rôle</th></tr>
+                        <tr><td>Versionnement</td><td>Git</td><td>Code source</td></tr>
+                        <tr><td>CI/CD</td><td>GitLab CI/CD</td><td>Pipeline</td></tr>
+                        <tr><td>Container</td><td>Docker</td><td>Packaging</td></tr>
+                        <tr><td>Orchestration</td><td>Kubernetes</td><td>Déploiement</td></tr>
+                        <tr><td>IaC</td><td>Terraform</td><td>Infrastructure</td></tr>
+                        <tr><td>Monitoring</td><td>Prometheus</td><td>Métriques</td></tr>
                     </table>
                 </section>
 
@@ -326,10 +759,95 @@ Avant:
 Dev 💻 → QA 🖥️ → Prod 🖥️
   ✅       ❌      ??
 
+(Python 3.9) (Python 3.8) (Python 3.7)
+
 Avec Docker:
 Dev 📦 → QA 📦 → Prod 📦
   ✅       ✅       ✅
+
+(Même image Docker partout)
                         </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Exemple : Dockerfile</h3>
+                    <pre><code class="dockerfile" data-trim>
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Installation des dépendances
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copie du code
+COPY . .
+
+# Build de l'application
+RUN npm run build
+
+# Exposition du port
+EXPOSE 8080
+
+# Commande de démarrage
+CMD ["npm", "start"]
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Exemple Complet : Du Code à la Prod</h3>
+                    <div class="example">
+                        <ol style="font-size: 0.8em;">
+                            <li>Dev fait un <code>git push</code></li>
+                            <li>GitLab CI démarre automatiquement</li>
+                            <li>Build + Tests (5 min)</li>
+                            <li>Construction de l'image Docker</li>
+                            <li>Push vers le registry</li>
+                            <li>Déploiement sur staging</li>
+                            <li>Tests automatisés sur staging</li>
+                            <li>✅ Validation manuelle</li>
+                            <li>Déploiement en production</li>
+                            <li>Monitoring automatique</li>
+                        </ol>
+                        <p><em>Temps total : ~15 minutes</em></p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Monitoring & Rollback</h3>
+                    <div class="diagram">
+                        <pre>
+Deploy v2.0 → Monitoring détecte :
+              - Error rate: 5% → 15%
+              - Response time: 200ms → 2s
+                ↓
+              Alerte automatique
+                ↓
+kubectl rollout undo deployment/app
+                ↓
+              Retour à v1.9 en 30 secondes
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Métriques de Succès</h3>
+                    <div class="example">
+                        <p><strong>Avant CI/CD :</strong></p>
+                        <ul>
+                            <li>Déploiements : 1x/mois</li>
+                            <li>Lead time : 4 semaines</li>
+                            <li>Taux d'échec : 20%</li>
+                            <li>Temps de récupération : 4h</li>
+                        </ul>
+                        <p><strong>Après CI/CD :</strong></p>
+                        <ul>
+                            <li>Déploiements : 10x/jour</li>
+                            <li>Lead time : 2 heures</li>
+                            <li>Taux d'échec : 2%</li>
+                            <li>Temps de récupération : 10 min</li>
+                        </ul>
                     </div>
                 </section>
             </section>
@@ -364,6 +882,7 @@ CD (Déploiement Continu)
                         <li>Changements plus petits</li>
                         <li>Déploiements plus fréquents</li>
                         <li>Corrections plus faciles</li>
+                        <li>Feedback immédiat</li>
                     </ul>
                 </section>
 
@@ -373,6 +892,17 @@ CD (Déploiement Continu)
                     <p style="font-size: 1.2em; margin-top: 1em;">Après : Déploiement = Routine ✅</p>
                     <br>
                     <p><em>La vitesse devient un avantage compétitif</em></p>
+                </section>
+
+                <section>
+                    <h3>Pour Aller Plus Loin</h3>
+                    <ul>
+                        <li>📖 "Continuous Delivery" - Jez Humble</li>
+                        <li>📖 "The Phoenix Project" - Gene Kim</li>
+                        <li>🌐 GitLab CI/CD Documentation</li>
+                        <li>🌐 Kubernetes Documentation</li>
+                        <li>🎓 Certification DevOps</li>
+                    </ul>
                 </section>
             </section>
 
