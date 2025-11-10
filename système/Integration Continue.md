@@ -58,21 +58,21 @@ Vous pourriez penser qu'il suffit de développer plus rapidement pour résoudre 
 
 ### Le Principe de l'Intégration Continue
 
-Comment résoudre ces problèmes ? L'**Intégration Continue** (IC) et l'**Agilité** proposent ensemble une approche radicalement différente. Ces deux pratiques sont indissociables : l'une ne peut exister sans l'autre.
+Comment résoudre ces problèmes ? L'**Intégration Continue** (CI) et l'**Agilité** proposent ensemble une approche radicalement différente. Ces deux pratiques sont indissociables : l'une ne peut exister sans l'autre.
 
 **L'Agilité** nous dit de décomposer le travail en **petites étapes** (sprints) où l'on produit un produit viable à chaque étape, réduisant ainsi l'effet tunnel. Au lieu de tout spécifier dès le départ, nous acceptons que les besoins évoluent et nous nous adaptons en continu.
 
 **L'Intégration Continue** nous dit de fusionner régulièrement les modifications de code dans une branche principale partagée (*mainline*) — au moins quotidiennement, idéalement toutes les quelques heures. Chaque intégration est vérifiée par une compilation automatique et une série de tests. Ce processus permet de détecter les erreurs rapidement après leur introduction.
 
-> L'Agilité sans IC, c'est risquer de se retrouver dans l'enfer de l'intégration à chaque fin de sprint. L'IC sans Agilité, c'est fusionner du code souvent mais sans vision ni direction claire. Les deux pratiques se renforcent mutuellement.
+> L'Agilité sans CI, c'est risquer de se retrouver dans l'enfer de l'intégration à chaque fin de sprint. L'CI sans Agilité, c'est fusionner du code souvent mais sans vision ni direction claire. Les deux pratiques se renforcent mutuellement.
 
 ### Les Pratiques Clés de l'Intégration Continue
 
-Pour que l'IC fonctionne réellement, il ne suffit pas de fusionner régulièrement le code. Nous devons mettre en place plusieurs pratiques essentielles :
+Pour que l'CI fonctionne réellement, il ne suffit pas de fusionner régulièrement le code. Nous devons mettre en place plusieurs pratiques essentielles :
 
 1.  **L'Intégration Fréquente à la Mainline :** Les développeurs s'engagent à fusionner leurs changements dans la branche principale (mainline/trunk) au moins quotidiennement, idéalement toutes les quelques heures.
 2.  **L'Automatisation du *Build* :** Le processus de transformation du code source en un système fonctionnel (compilation, déplacement de fichiers, chargement de schémas de base de données) doit être automatisé pour éliminer les erreurs humaines et le temps perdu.
-3.  **Le Code Auto-Testé (*Self-Testing Code*) :** La construction (le *build*) doit inclure une suite de tests complète (unitaires, d'intégration) qui s'exécute automatiquement. Si les tests sont "verts", on a confiance dans la santé du produit. L'IC ne peut fonctionner sans une suite de tests robuste.
+3.  **Le Code Auto-Testé (*Self-Testing Code*) :** La construction (le *build*) doit inclure une suite de tests complète (unitaires, d'intégration) qui s'exécute automatiquement. Si les tests sont "verts", on a confiance dans la santé du produit. L'CI ne peut fonctionner sans une suite de tests robuste.
 4.  **La Correction Immédiate :** Si la *build* d'intégration échoue (la "barre devient rouge"), sa correction devient la tâche la plus prioritaire de l'équipe. Revenir à la dernière version saine est souvent la meilleure façon de reprendre le travail rapidement.
 
 ### Les Bénéfices de l'Intégration Continue
@@ -142,7 +142,7 @@ Pour que la livraison continue fonctionne réellement, nous devons nous appuyer 
 
 ### Récapitulatif des Outils Clés
 
-Voici un récapitulatif des outils mentionnés et leur rôle dans l'IC/CD :
+Voici un récapitulatif des outils mentionnés et leur rôle dans l'CI/CD :
 
 | Catégorie | Outils | Rôle |
 | :--- | :--- | :--- |
