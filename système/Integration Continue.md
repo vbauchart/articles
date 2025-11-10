@@ -92,11 +92,11 @@ Et puis il y a le **"CI as Code"** avec des outils comme GitLab CI/CD. La config
 
 > Le "CI as Code" a révolutionné l'intégration continue. Avant, la configuration des builds était souvent cachée dans des interfaces graphiques difficiles à maintenir. Aujourd'hui, avec GitLab, tout est dans le code et peut être revu, testé et versionné comme n'importe quelle autre partie du projet.
 
-## De l'Intégration Continue à la Livraison Continue
+## De la CI au CD : Le Déploiement Continu
 
-### Le Déploiement Continu : Une Extension Rendue Possible par les Outils Modernes
+### Le CD : Une Extension Rendue Possible par les Outils Modernes
 
-Le **Déploiement Continu** (Continuous Deployment) est l'extension naturelle de l'Intégration Continue : pourquoi s'arrêter à l'intégration du code quand on pourrait également automatiser le déploiement en production ?
+Le **CD** ou **Déploiement Continu** (Continuous Deployment) est l'extension naturelle de la CI : pourquoi s'arrêter à l'intégration du code quand on pourrait également automatiser le déploiement en production ?
 
 Pendant longtemps, cette idée était séduisante mais **difficilement réalisable**. Le déploiement était un processus complexe, manuel, et souvent spécifique à chaque environnement. Mais deux révolutions technologiques ont changé la donne.
 
@@ -104,23 +104,17 @@ D'abord, **Kubernetes et l'orchestration de conteneurs**. Kubernetes a standardi
 
 Ensuite, **l'Infrastructure as Code** avec Terraform, Ansible et compagnie. Ces outils ont permis de gérer l'infrastructure de la même façon que le code applicatif. L'infrastructure est décrite dans des fichiers versionnés, et les changements sont appliqués de manière prévisible et reproductible. Fini le temps où il fallait se connecter en SSH sur chaque serveur pour modifier la configuration à la main !
 
-### Continuous Delivery vs. Continuous Deployment
-
-Il est important de distinguer ces deux pratiques :
-
-*   **Livraison Continue (CD - Continuous Delivery) :** Le logiciel est construit de manière à pouvoir être **déployé en production à tout moment**. La décision de déployer reste une décision métier (un bouton à cliquer).
-*   **Déploiement Continu (Continuous Deployment) :** Va plus loin en déployant **automatiquement** chaque changement validé en production, sans intervention humaine.
-
 ### Le Pipeline de Déploiement
 
-Comment mettre en œuvre la livraison continue ? On utilise ce qu'on appelle un *Deployment Pipeline*, qui automatise toutes les étapes du processus de livraison :
+Comment mettre en œuvre le CD concrètement ? On utilise ce qu'on appelle un *Deployment Pipeline*, qui automatise toutes les étapes du processus de déploiement :
 
 1.  **Build de validation (Commit Build) :** Lancement rapide des tests unitaires (moins de 10 minutes idéalement) pour valider le code fraîchement intégré.
 2.  **Étapes ultérieures :** Si la première étape est verte, des tests plus lents et plus exhaustifs (tests fonctionnels, tests de performance, tests de sécurité) peuvent être lancés sur des machines supplémentaires, souvent dans un clone de l'environnement de production.
+3.  **Déploiement automatique :** Si toutes les étapes sont vertes, le code est automatiquement déployé en production.
 
-### Les Fondations de la Livraison Continue
+### Les Fondations du CI/CD
 
-Pour que la livraison continue fonctionne réellement, plusieurs éléments doivent être en place.
+Pour que le CI/CD fonctionne réellement, plusieurs éléments doivent être en place.
 
 Commençons par **l'Infrastructure as Code** (IaC). Avec Terraform, Ansible ou CloudFormation, l'infrastructure est décrite dans des fichiers versionnés. Les environnements de développement, test et production sont créés de manière reproductible. Les changements d'infrastructure passent par le même processus de revue que le code applicatif, et les environnements de test deviennent des mimiques exactes de la production. Plus de divergences entre dev et prod !
 
@@ -157,4 +151,4 @@ L'**Intégration Continue** et l'**Agilité**, indissociables, ont apporté la s
 
 Le bénéfice ultime est la **réduction du risque de déploiement** : puisque nous déployons des changements plus petits et fréquents, il y a moins de choses susceptibles de mal tourner, et il est plus facile de corriger si un problème survient.
 
-Au final, l'intégration et la livraison continues permettent de transformer la vitesse de développement en avantage compétitif, plutôt qu'en source d'anxiété. Le déploiement n'est plus un événement stressant qui se produit tous les six mois, mais une opération routinière et maîtrisée qui peut avoir lieu plusieurs fois par jour.
+Au final, le CI/CD permet de transformer la vitesse de développement en avantage compétitif, plutôt qu'en source d'anxiété. Le déploiement n'est plus un événement stressant qui se produit tous les six mois, mais une opération routinière et maîtrisée qui peut avoir lieu plusieurs fois par jour.
