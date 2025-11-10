@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation CI/CD : La Révolution Invisible du Développement Logiciel</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+
+    <style>
+        .reveal pre {
+            font-size: 0.5em;
+            line-height: 1.2;
+        }
+        .reveal ul {
+            font-size: 0.9em;
+        }
+        .reveal li {
+            margin: 0.5em 0;
+        }
+        .diagram {
+            font-family: monospace;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 0.7em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide de titre -->
+            <section>
+                <h1>CI/CD</h1>
+                <h3>La Révolution Invisible du Développement Logiciel</h3>
+            </section>
+
+            <!-- Plan de la formation -->
+            <section>
+                <h2>Plan de la Formation</h2>
+                <ol>
+                    <li>Le Modèle Séquentiel : Parfaitement Adapté à l'Industrie</li>
+                    <li>L'Adaptation au Logiciel : Le Waterfall</li>
+                    <li>La Crise de l'Intégration</li>
+                    <li>La Solution : CI + Agilité</li>
+                    <li>Le Déploiement Continu (CD)</li>
+                </ol>
+            </section>
+
+            <!-- Module 1 : Modèle Séquentiel -->
+            <section>
+                <section>
+                    <h2>Module 1</h2>
+                    <h3>Le Modèle Séquentiel</h3>
+                    <p>Parfaitement Adapté à l'Industrie</p>
+                </section>
+
+                <section>
+                    <h3>Production d'une Voiture</h3>
+                    <div class="diagram">
+                        <pre>
+Conception → Assemblage → Peinture → Contrôle → Livraison
+                        </pre>
+                    </div>
+                    <ul>
+                        <li>Processus linéaire et séquentiel</li>
+                        <li>Chaque étape doit être parfaite</li>
+                        <li>Pas de retour en arrière possible</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Pourquoi ça Marche ?</h3>
+                    <p style="font-size: 1.5em; margin: 1em 0;">🚗 → ❌ Modification</p>
+                    <ul>
+                        <li><strong>Contrainte physique</strong> : produit non modifiable</li>
+                        <li>Rappel de véhicules = extrêmement coûteux</li>
+                        <li>Mieux vaut tout vérifier <em>avant</em></li>
+                    </ul>
+                </section>
+            </section>
+
+            <!-- Module 2 : Waterfall -->
+            <section>
+                <section>
+                    <h2>Module 2</h2>
+                    <h3>L'Adaptation au Logiciel</h3>
+                    <p>Le Waterfall et le Cycle en V</p>
+                </section>
+
+                <section>
+                    <h3>Le Modèle Waterfall</h3>
+                    <div class="diagram">
+                        <pre>
+Analyse & Conception
+        ↓
+   Développement
+        ↓
+      Tests
+        ↓
+   Déploiement
+                        </pre>
+                    </div>
+                    <p><em>Inspiration directe de l'industrie</em></p>
+                </section>
+
+                <section>
+                    <h3>L'Avantage du Logiciel</h3>
+                    <p style="font-size: 1.5em; margin: 1em 0;">💻 → ✅ Modification</p>
+                    <ul>
+                        <li>Application modifiable après production</li>
+                        <li>Coût relativement faible</li>
+                        <li>Déploiement d'une nouvelle version</li>
+                        <li><strong>Mais on a gardé le modèle séquentiel !</strong></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Les 3 Problèmes du Waterfall</h3>
+                    <ol>
+                        <li><strong>Passages de relais</strong> : silos, malentendus, délais</li>
+                        <li><strong>Effet tunnel</strong> : 6 mois sans retour</li>
+                        <li><strong>Dette technique</strong> : peur de refactorer</li>
+                    </ol>
+                    <p style="margin-top: 1em;"><em>"Ça marchait chez nous"</em></p>
+                </section>
+            </section>
+
+            <!-- Module 3 : Crise de l'Intégration -->
+            <section>
+                <section>
+                    <h2>Module 3</h2>
+                    <h3>La Crise de l'Intégration</h3>
+                    <p>Quand la Vitesse devient un Piège</p>
+                </section>
+
+                <section>
+                    <h3>Développer Plus Vite ?</h3>
+                    <p style="font-size: 1.2em;">Vitesse ↑ + Intégration Rare = 💥</p>
+                    <ul>
+                        <li>Les problèmes sont <strong>exacerbés</strong></li>
+                        <li>Pas éliminés !</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>L'Enfer de l'Intégration</h3>
+                    <ul>
+                        <li>🔴 Effondrement de la productivité</li>
+                        <li>⏰ Délais imprévisibles</li>
+                        <li>🐛 Conflits sémantiques</li>
+                        <li>❌ Refactoring impossible</li>
+                        <li>📈 Bugs cumulatifs</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Le Cercle Vicieux</h3>
+                    <div class="diagram">
+                        <pre>
+Plus on attend
+    ↓
+Plus c'est difficile à intégrer
+    ↓
+Plus on hésite à intégrer
+    ↓
+Plus on attend...
+                        </pre>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Module 4 : CI + Agilité -->
+            <section>
+                <section>
+                    <h2>Module 4</h2>
+                    <h3>La Solution</h3>
+                    <p>L'Intégration Continue et l'Agilité</p>
+                </section>
+
+                <section>
+                    <h3>Deux Pratiques Indissociables</h3>
+                    <div style="display: flex; justify-content: space-around; margin: 2em 0;">
+                        <div>
+                            <h4>Agilité</h4>
+                            <ul>
+                                <li>Petites étapes</li>
+                                <li>Sprints courts</li>
+                                <li>Produit viable</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>CI</h4>
+                            <ul>
+                                <li>Intégrations fréquentes</li>
+                                <li>Tests automatisés</li>
+                                <li>Feedback rapide</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><em>L'une ne peut exister sans l'autre</em></p>
+                </section>
+
+                <section>
+                    <h3>4 Pratiques Clés de la CI</h3>
+                    <ol>
+                        <li><strong>Intégration fréquente</strong> : quotidienne (ou plus)</li>
+                        <li><strong>Automatisation du build</strong> : zéro erreur humaine</li>
+                        <li><strong>Code auto-testé</strong> : tests = confiance</li>
+                        <li><strong>Correction immédiate</strong> : 🔴 → priorité #1</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Le Workflow CI</h3>
+                    <div class="diagram">
+                        <pre>
+Dev → Commit → Build → Tests → ✅ / 🔴
+                                  ↓
+                              Correction
+                              immédiate
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Les Bénéfices</h3>
+                    <ul>
+                        <li>✅ Réduction des risques</li>
+                        <li>🔄 Refactoring sans crainte</li>
+                        <li>📝 CI as Code (GitLab CI/CD)</li>
+                        <li>⚡ Feedback en minutes (pas en semaines)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>CI as Code</h3>
+                    <pre><code class="yaml" data-trim>
+# .gitlab-ci.yml
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  script:
+    - npm install
+    - npm run build
+                    </code></pre>
+                    <p><em>Pipeline versionné avec le code</em></p>
+                </section>
+            </section>
+
+            <!-- Module 5 : CD -->
+            <section>
+                <section>
+                    <h2>Module 5</h2>
+                    <h3>De la CI au CD</h3>
+                    <p>Le Déploiement Continu</p>
+                </section>
+
+                <section>
+                    <h3>CD = CI + Déploiement Auto</h3>
+                    <div class="diagram">
+                        <pre>
+Commit → Build → Tests → Deploy
+         ✅      ✅       🚀
+                        </pre>
+                    </div>
+                    <p><em>Pourquoi s'arrêter à l'intégration ?</em></p>
+                </section>
+
+                <section>
+                    <h3>Deux Révolutions Technologiques</h3>
+                    <ol>
+                        <li><strong>Kubernetes</strong> : Orchestration de conteneurs</li>
+                        <li><strong>Infrastructure as Code</strong> : Terraform, Ansible</li>
+                    </ol>
+                    <p style="margin-top: 1em;">Avant : déploiement complexe, manuel, fragile<br>
+                    Après : <code>kubectl apply</code></p>
+                </section>
+
+                <section>
+                    <h3>Le Pipeline de Déploiement</h3>
+                    <div class="diagram">
+                        <pre>
+1. Commit Build (tests unitaires < 10 min)
+           ↓
+2. Tests avancés (fonctionnels, perf, sécu)
+           ↓
+3. Déploiement automatique en prod
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Les 4 Fondations du CI/CD</h3>
+                    <ol>
+                        <li><strong>Infrastructure as Code</strong> : Terraform</li>
+                        <li><strong>Containerisation</strong> : Docker</li>
+                        <li><strong>Orchestration</strong> : Kubernetes</li>
+                        <li><strong>Culture DevOps</strong> : collaboration</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Stack CI/CD Moderne</h3>
+                    <table style="font-size: 0.7em;">
+                        <tr><td>Git</td><td>Versionnement</td></tr>
+                        <tr><td>GitLab CI/CD</td><td>Pipeline</td></tr>
+                        <tr><td>Docker</td><td>Containerisation</td></tr>
+                        <tr><td>Kubernetes</td><td>Orchestration</td></tr>
+                        <tr><td>Terraform</td><td>Infrastructure</td></tr>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>Le Problème "Ça Marche sur ma Machine"</h3>
+                    <div class="diagram">
+                        <pre>
+Avant:
+Dev 💻 → QA 🖥️ → Prod 🖥️
+  ✅       ❌      ??
+
+Avec Docker:
+Dev 📦 → QA 📦 → Prod 📦
+  ✅       ✅       ✅
+                        </pre>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Conclusion -->
+            <section>
+                <section>
+                    <h2>Conclusion</h2>
+                </section>
+
+                <section>
+                    <h3>Le Parcours</h3>
+                    <div class="diagram">
+                        <pre>
+Industrie (Voiture)
+    ↓ inspiration
+Waterfall (Logiciel)
+    ↓ problèmes
+Crise de l'intégration
+    ↓ solution
+CI + Agilité
+    ↓ extension
+CD (Déploiement Continu)
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Le Bénéfice Ultime</h3>
+                    <p style="font-size: 1.5em; margin: 1em 0;">📉 Risque de Déploiement</p>
+                    <ul>
+                        <li>Changements plus petits</li>
+                        <li>Déploiements plus fréquents</li>
+                        <li>Corrections plus faciles</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Transformation</h3>
+                    <p style="font-size: 1.2em;">Avant : Déploiement = Stress 😰</p>
+                    <p style="font-size: 1.2em; margin-top: 1em;">Après : Déploiement = Routine ✅</p>
+                    <br>
+                    <p><em>La vitesse devient un avantage compétitif</em></p>
+                </section>
+            </section>
+
+            <!-- Slide de fin -->
+            <section>
+                <h1>Questions ?</h1>
+                <p style="margin-top: 2em;">Merci de votre attention</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            controls: true,
+            progress: true,
+            center: true,
+            touch: true,
+            keyboard: true,
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>
