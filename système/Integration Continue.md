@@ -4,12 +4,11 @@
   - [Introduction](#introduction)
   - [Le Modèle Séquentiel : Parfaitement Adapté à l'Industrie](#le-modèle-séquentiel--parfaitement-adapté-à-lindustrie)
     - [La Fabrication Séquentielle dans l'Industrie](#la-fabrication-séquentielle-dans-lindustrie)
-  - [L'Adaptation au Logiciel : Le Waterfall et le Cycle en V](#ladaptation-au-logiciel--le-waterfall-et-le-cycle-en-v)
-    - [Un Avantage Majeur du Logiciel](#un-avantage-majeur-du-logiciel)
+    - [L'Adaptation au Logiciel : Le Waterfall et le Cycle en V](#ladaptation-au-logiciel--le-waterfall-et-le-cycle-en-v)
     - [Les Problèmes du Waterfall Appliqué au Logiciel](#les-problèmes-du-waterfall-appliqué-au-logiciel)
-  - [La Crise de l'Intégration : Quand la Vitesse devient un Piège](#la-crise-de-lintégration--quand-la-vitesse-devient-un-piège)
-  - [La Solution : L'Intégration Continue et l'Agilité](#la-solution--lintégration-continue-et-lagilité)
-    - [Le Principe de l'Intégration Continue](#le-principe-de-lintégration-continue)
+  - [Le Modèle Incrémental : le Développement Permanent](#le-modèle-incrémental--le-développement-permanent)
+    - [Développer sans attendre](#développer-sans-attendre)
+    - [Agilité et Intégration Continue](#agilité-et-intégration-continue)
     - [Les Pratiques Clés de l'Intégration Continue](#les-pratiques-clés-de-lintégration-continue)
     - [Les Bénéfices de l'Intégration Continue](#les-bénéfices-de-lintégration-continue)
   - [De la CI au CD : Le Déploiement Continu](#de-la-ci-au-cd--le-déploiement-continu)
@@ -39,15 +38,13 @@ Pourquoi ce modèle fonctionne-t-il si bien dans l'industrie ? Parce qu'**une fo
 
 Cette contrainte physique justifie pleinement l'approche séquentielle : mieux vaut passer du temps en conception pour éviter de coûteuses modifications après coup.
 
-## L'Adaptation au Logiciel : Le Waterfall et le Cycle en V
+### L'Adaptation au Logiciel : Le Waterfall et le Cycle en V
 
-### Un Avantage Majeur du Logiciel
-
-Lorsque l'industrie du logiciel a cherché à s'organiser, il était naturel de s'inspirer des méthodes qui avaient fait leurs preuves dans l'industrie manufacturière. Le modèle séquentiel a donc été adapté, donnant naissance au **Cycle en V** et au modèle **Waterfall** (cascade).
+Lorsque l'industrie du logiciel a cherché à s'organiser, il était naturel de s'inspirer des méthodes qui avaient fait leurs preuves dans l'industrie manufacturière. Le modèle séquentiel a donc été adapté, donnant naissance au **Cycle en V** ou au modèle **Waterfall** (cascade).
 
 Mais il y a une différence fondamentale entre une voiture et un logiciel : **une application peut être modifiée après sa mise en production, et à un coût relativement faible**. Pas besoin de rappeler tous les utilisateurs ! Il suffit de déployer une nouvelle version.
 
-Cet avantage énorme du logiciel aurait dû nous faire repenser le modèle de développement. Au lieu de cela, nous avons continué à appliquer le modèle séquentiel comme si le logiciel était aussi rigide qu'une voiture. Le Waterfall est ainsi devenu la norme :
+Cet avantage énorme du logiciel aurait dû nous faire repenser le modèle de développement. Au lieu de cela, nous avons continué à appliquer le modèle séquentiel comme si le logiciel était aussi rigide qu'une voiture. Le modèle séquentiel est ainsi devenu la norme :
 
 1.  **Analyse et Conception complète** : Spécification détaillée de toutes les fonctionnalités
 2.  **Développement** : Codage de l'ensemble du système
@@ -58,15 +55,21 @@ Cet avantage énorme du logiciel aurait dû nous faire repenser le modèle de d�
 
 Pourtant, lorsqu'on applique cette approche séquentielle au développement logiciel, plusieurs problèmes apparaissent rapidement.
 
-D'abord, il y a ce qu'on appelle le **risque des passages de relais** (*Handover*). Le travail passe de manière rigide entre des équipes distinctes : les développeurs codent, puis passent le relais aux testeurs, qui passent ensuite à l'équipe de packaging, qui finalement livre à la production. Chaque transfert crée des silos, des malentendus, et surtout... des délais. "Ça marchait chez nous" devient le refrain habituel.
+D'abord, il y a le **risque des passages de relais** (*Handover*). Le travail passe de manière rigide entre des équipes distinctes : les développeurs codent, puis passent le relais aux testeurs, qui passent ensuite à l'équipe de packaging, qui finalement livre à la production. Chaque transfert crée des silos, des malentendus, et surtout des délais. C'est ainsi que sont nés les documentations de construction, les documentations d'intégration ou encore les documentations de mises en production. Mais cette bureaucratie freine l'innovation, en plus d'être chère et peu fiable.
 
-Ensuite vient **l'effet tunnel**. Imaginez : le travail s'accumule pendant six mois sans aucun retour concret en production. Pendant tout ce temps, impossible de savoir si ce qu'on construit correspond vraiment aux besoins. Et quand arrivent enfin les erreurs d'intégration, elles sont devenues difficiles et coûteuses à corriger.
+Ensuite vient **l'effet tunnel**. Imaginez : le travail s'accumule pendant six mois sans aucun retour concret en production. Pendant tout ce temps, il est impossible de savoir si ce qu'on construit correspond vraiment aux besoins. Et quand arrivent enfin les problèmes d'intégration, elles sont devenues difficiles et coûteuses à corriger.
 
 Enfin, l'intégration tardive décourage le Refactoring. Résultat ? La **dette technique s'accumule**. Les développeurs hésitent à améliorer le code de peur de tout casser juste avant la grande intégration. La structure du code se dégrade progressivement, et la productivité avec elle.
 
-## La Crise de l'Intégration : Quand la Vitesse devient un Piège
+## Le Modèle Incrémental : le Développement Permanent
 
-Vous pourriez penser qu'il suffit de développer plus rapidement pour résoudre ces problèmes. Malheureusement, si une équipe décide de développer rapidement mais continue d'intégrer rarement (approche *Pre-Release Integration*), les problèmes ne sont pas éliminés, ils sont au contraire exacerbés :
+### Développer sans attendre
+
+La première tentative pour raccourcir les délais a été de découper la spécification en plusieurs étapes. Ainsi, lorsque la première étape est terminée, elle peut déjà partir en test, pendant que l'équipe de développement commence sans attendre à développer l'étape suivante. Heureusement, les gestionnaires de version de code permettent de garder en mémoire l'évolution et de tracer les différentes versions d'une même base de code. `Subversion` était alors une petite révolution !
+
+L'autre partie de la solution a été de découper la base de code
+
+Malheureusement, si une équipe décide de développer rapidement, mais continue d'intégrer rarement (approche *Pre-Release Integration*), les problèmes ne sont pas éliminés, ils sont au contraire exacerbés :
 
 | Problème / Risque | Description |
 | :--- | :--- |
@@ -76,13 +79,12 @@ Vous pourriez penser qu'il suffit de développer plus rapidement pour résoudre 
 | **Frein au Refactoring** | La peur de provoquer des *merges* difficiles et de "casser le travail des autres" décourage les développeurs de retravailler la structure du code (Refactoring), même si cela améliorerait la productivité future. |
 | **Bugs Cumulatifs** | Plus il y a de bugs, plus il est difficile de les retirer. Les interactions entre plusieurs défauts rendent chaque correction plus difficile à trouver, augmentant la frustration et nuisant à la réputation. |
 
-## La Solution : L'Intégration Continue et l'Agilité
 
-### Le Principe de l'Intégration Continue
+### Agilité et Intégration Continue
 
 Comment résoudre ces problèmes ? L'**Intégration Continue** (CI) et l'**Agilité** proposent ensemble une approche radicalement différente. Ces deux pratiques sont indissociables : l'une ne peut exister sans l'autre.
 
-**L'Agilité** nous dit de décomposer le travail en **petites étapes** (sprints) où l'on produit un produit viable à chaque étape, réduisant ainsi l'effet tunnel. Au lieu de tout spécifier dès le départ, nous acceptons que les besoins évoluent et nous nous adaptons en continu.
+**L'Agilité** nous dit de décomposer le travail en **petites étapes** (sprints) où l'on produit un produit viable à chaque étape, réduisant ainsi l'effet tunnel. Au lieu de tout spécifier dès le départ, nous acceptons que les besoins évoluent et nous nous adaptons en continu. Contrairement à l'industrie manufacturière, il est parfaitement possible de livrer un logiciel et de repartir immédiatement pour un nouveau cycle de développement.
 
 **L'Intégration Continue** nous dit de fusionner régulièrement les modifications de code dans une branche principale partagée (*mainline*) — au moins quotidiennement, idéalement toutes les quelques heures. Chaque intégration est vérifiée par une compilation automatique et une série de tests. Ce processus permet de détecter les erreurs rapidement après leur introduction.
 
